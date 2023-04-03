@@ -1,0 +1,41 @@
+.label {
+    font-family: "Arial";
+    font-size: 14pt;
+}
+
+.inputField {
+    -fx-font-family: "Arial";
+    -fx-font-size: 12pt;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1;
+    -fx-padding: 3 5 3 5;
+}
+
+.button {
+    -fx-font-family: "Arial";
+    -fx-font-size: 12pt;
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #4CAF50;
+    -fx-border-width: 1;
+    -fx-padding: 5 10 5 10;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #45a049;
+}
+
+.outputArea {
+    -fx-font-family: "Arial";
+    -fx-font-size: 12pt;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1;
+    -fx-padding: 5;
+}
