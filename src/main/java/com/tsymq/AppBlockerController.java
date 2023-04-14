@@ -62,6 +62,7 @@ public class AppBlockerController {
             });
         });
         appBlocker.monitorActiveEdgeUrl();
+        appBlocker.monitorActiveEdgeUrlToClose();
     }
 
     @FXML

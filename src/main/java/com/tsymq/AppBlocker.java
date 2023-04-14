@@ -16,7 +16,18 @@ public class AppBlocker {
 
     private final Set<String> blockedWebsites = new HashSet<>();
 
+    private final Set<String> closedWebsites = new HashSet<>();
+
+
     private volatile boolean monitoring = false;
+
+    public AppBlocker() {
+        closedWebsites.add("javbus");
+        closedWebsites.add("javlibrary");
+        closedWebsites.add("jable");
+        closedWebsites.add("missav");
+        closedWebsites.add("hanime1.me");
+    }
 
 
     public interface OnActiveEdgeUrlChangedListener {
@@ -128,6 +139,31 @@ public class AppBlocker {
         }
     }
 
+    public void closeBrowserWindow(String browser) {
+        String closeWindowScript;
+        if (browser.equals("edge")) {
+            closeWindowScript = "tell application \"Microsoft Edge\" to close front window";
+        } else {
+            closeWindowScript = "tell application \"Safari\" to close front window";
+        }
+        String[] args = {"osascript", "-e", closeWindowScript};
+        runScript(args);
+    }
+
+    public void closeActiveTab(String browser) {
+        String closeTabScript;
+
+        if (browser.equals("edge")) {
+            closeTabScript = "tell application \"Microsoft Edge\" to close active tab of front window";
+        } else {
+            closeTabScript = "tell application \"Safari\" to close current tab of front window";
+        }
+
+        String[] args = {"osascript", "-e", closeTabScript};
+        runScript(args);
+    }
+
+
     public boolean isBlocked(String url) {
         for (String blockedWebsite : blockedWebsites) {
             if (url.contains(blockedWebsite)) {
@@ -135,6 +171,21 @@ public class AppBlocker {
             }
         }
         return false;
+    }
+
+    public boolean isClosed(String url) {
+        for (String closedWebsite : closedWebsites) {
+            if (url.contains(closedWebsite)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public boolean closeWebsite(String website) {
+        closedWebsites.add(website);
+        return true;
     }
 
     private final String BLOCKED_WEBSITES_FILENAME = "/Users/tsymq/.config/myfocusme/blocked_websites.txt";
@@ -180,13 +231,37 @@ public class AppBlocker {
                 }
 
                 try {
-                    Thread.sleep(1000); // 每1秒检查一次
+                    Thread.sleep(1500); // 每1秒检查一次
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
     }
+
+    public void monitorActiveEdgeUrlToClose() {
+        new Thread(() -> {
+            while (true) {
+                String browser = "edge";
+                String activeUrl = getActiveEdgeURL();
+                if (activeUrl.isEmpty()) {
+                    browser = "safari";
+                    activeUrl = getActiveSafariURL();
+                }
+                if (activeUrl!=null && !activeUrl.isEmpty() && isClosed(activeUrl)) {
+                    closeActiveTab(browser);
+                }
+
+
+                try {
+                    Thread.sleep(3000); // 每3秒检查一次
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
 
     public void stopMonitoring() {
         monitoring = false;
