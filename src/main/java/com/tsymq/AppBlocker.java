@@ -14,7 +14,13 @@ import java.util.stream.Collectors;
 
 public class AppBlocker {
 
+    private final String BLOCKED_WEBSITES_FILENAME = "/Users/tsymq/.config/myfocusme/blocked_websites.txt";
+
+    private final String WHITE_WEBSITES_FILENAME = "/Users/tsymq/.config/myfocusme/white_websites.txt";
+
     private final Set<String> blockedWebsites = new HashSet<>();
+
+    private final Set<String> whiteWebsites = new HashSet<>();
 
     private final Set<String> closedWebsites = new HashSet<>();
 
@@ -23,6 +29,7 @@ public class AppBlocker {
 
     public AppBlocker() {
         closedWebsites.add("javbus");
+        closedWebsites.add("porn");
         closedWebsites.add("javlibrary");
         closedWebsites.add("jable");
         closedWebsites.add("missav");
@@ -172,7 +179,14 @@ public class AppBlocker {
         }
         return false;
     }
-
+    public boolean isWhiteWeb(String url) {
+        for (String whiteWebsite : whiteWebsites) {
+            if (url.contains(whiteWebsite)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public boolean isClosed(String url) {
         for (String closedWebsite : closedWebsites) {
             if (url.contains(closedWebsite)) {
@@ -188,7 +202,6 @@ public class AppBlocker {
         return true;
     }
 
-    private final String BLOCKED_WEBSITES_FILENAME = "/Users/tsymq/.config/myfocusme/blocked_websites.txt";
 
     public void saveBlockedWebsites() {
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(BLOCKED_WEBSITES_FILENAME))) {
@@ -208,6 +221,20 @@ public class AppBlocker {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     blockedWebsites.add(line);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void loadwhiteWebsites() {
+        Path whiteWebsitesPath = Paths.get(WHITE_WEBSITES_FILENAME);
+        if (Files.exists(whiteWebsitesPath)) {
+            try (BufferedReader reader = Files.newBufferedReader(whiteWebsitesPath)) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    whiteWebsites.add(line);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
