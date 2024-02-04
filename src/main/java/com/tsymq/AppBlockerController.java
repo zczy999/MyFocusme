@@ -35,6 +35,8 @@ public class AppBlockerController {
     @FXML
     private TextField endTimeField;
 
+    private boolean isStartUp = false;
+
     private Timer timer;
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
@@ -46,9 +48,9 @@ public class AppBlockerController {
 
         appBlocker.setOnActiveEdgeUrlChangedListener((url, browser) -> {
             Platform.runLater(() -> {
-                if (appBlocker.isWhiteWeb(url)){
-                    return;
-                }
+//                if (appBlocker.isWhiteWeb(url)){
+//                    return;
+//                }
                 if (appBlocker.isBlocked(url)) {
                     if (browser.equals("edge")) {
                         outputArea.appendText("The active website in Microsoft Edge is blocked: " + url + "\n");
@@ -65,7 +67,7 @@ public class AppBlockerController {
                 }
             });
         });
-        appBlocker.monitorActiveEdgeUrl();
+//        appBlocker.monitorActiveEdgeUrl();
         appBlocker.monitorActiveEdgeUrlToClose();
     }
 
@@ -82,7 +84,14 @@ public class AppBlockerController {
 
     @FXML
     void onStartMonitoringButtonClicked(ActionEvent event) {
+        if (isStartUp == true){
+            appBlocker.stopMonitoring();
+            outputArea.appendText("Stopped monitoring Microsoft Edge active URLs.\n");
+            isStartUp = false;
+            return;
+        }
         appBlocker.monitorActiveEdgeUrl();
+        isStartUp = true;
         outputArea.appendText("Started monitoring Microsoft Edge active URLs.\n");
     }
 

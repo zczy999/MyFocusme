@@ -34,6 +34,7 @@ public class AppBlocker {
         closedWebsites.add("jable");
         closedWebsites.add("missav");
         closedWebsites.add("hanime1.me");
+        closedWebsites.add("2dfan");
     }
 
 
@@ -258,7 +259,7 @@ public class AppBlocker {
                 }
 
                 try {
-                    Thread.sleep(1500); // 每1秒检查一次
+                    Thread.sleep(2000); // 每1秒检查一次
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -281,7 +282,7 @@ public class AppBlocker {
 
 
                 try {
-                    Thread.sleep(3000); // 每3秒检查一次
+                    Thread.sleep(1000); // 每3秒检查一次
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

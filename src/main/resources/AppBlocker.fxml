@@ -30,7 +30,7 @@
                styleClass="inputField"/>
 
     <Button fx:id="blockButton" text="Block" onAction="#onBlockButtonClicked" styleClass="button"/>
-<!--    <Button text="Start Monitoring" onAction="#onStartMonitoringButtonClicked" styleClass="button"/>-->
+    <Button text="Hard Block" onAction="#onStartMonitoringButtonClicked" styleClass="button"/>
 <!--    <Button text="Stop Monitoring" onAction="#onStopMonitoringButtonClicked" styleClass="button"/>-->
 
     <Label text="Output:" styleClass="label"/>
