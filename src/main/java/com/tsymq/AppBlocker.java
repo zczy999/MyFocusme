@@ -35,6 +35,7 @@ public class AppBlocker {
         closedWebsites.add("missav");
         closedWebsites.add("hanime1.me");
         closedWebsites.add("2dfan");
+        closedWebsites.add("njav");
     }
 
 
@@ -69,8 +70,7 @@ public class AppBlocker {
     }
 
 
-
-    public  void openNewSafariTab() {
+    public void openNewSafariTab() {
         String newTabScript = "tell application \"Safari\"\n" +
                 "   tell window 1\n" +
                 "       set newTab to make new tab\n" +
@@ -90,6 +90,16 @@ public class AppBlocker {
         }
     }
 
+    private String getActiveAppName() {
+        String getActiveAppNameScript ="tell application \"System Events\" to name of first application process whose frontmost is true";
+        String[] args = {"osascript", "-e", getActiveAppNameScript};
+        String result = runScript1(args);
+
+        if (result == null || result.isBlank()) {
+            return null;
+        }
+        return result.trim();
+    }
 
     private String getActiveSafariURL() {
         String safariURLScript = "tell application \"System Events\"\n" +
@@ -171,6 +181,11 @@ public class AppBlocker {
         runScript(args);
     }
 
+    private void closeChrome() {
+        String closeChromeScript = "tell application \"Google Chrome\" to quit";
+        String[] args = {"osascript", "-e", closeChromeScript};
+        runScript(args);
+    }
 
     public boolean isBlocked(String url) {
         for (String blockedWebsite : blockedWebsites) {
@@ -180,6 +195,7 @@ public class AppBlocker {
         }
         return false;
     }
+
     public boolean isWhiteWeb(String url) {
         for (String whiteWebsite : whiteWebsites) {
             if (url.contains(whiteWebsite)) {
@@ -188,6 +204,7 @@ public class AppBlocker {
         }
         return false;
     }
+
     public boolean isClosed(String url) {
         for (String closedWebsite : closedWebsites) {
             if (url.contains(closedWebsite)) {
@@ -248,14 +265,20 @@ public class AppBlocker {
         monitoring = true;
         new Thread(() -> {
             while (monitoring) {
+                String activeAppName = getActiveAppName();
+                if (activeAppName!=null && activeAppName.equals("Google Chrome")){
+                    closeChrome();
+                    continue;
+                }
+
                 String browser = "edge";
                 String activeUrl = getActiveEdgeURL();
                 if (activeUrl.isEmpty()) {
                     browser = "safari";
                     activeUrl = getActiveSafariURL();
                 }
-                if (activeUrl!=null && !activeUrl.isEmpty() && onActiveEdgeUrlChangedListener != null) {
-                    onActiveEdgeUrlChangedListener.onActiveEdgeUrlChanged(activeUrl,browser);
+                if (activeUrl != null && !activeUrl.isEmpty() && onActiveEdgeUrlChangedListener != null) {
+                    onActiveEdgeUrlChangedListener.onActiveEdgeUrlChanged(activeUrl, browser);
                 }
 
                 try {
@@ -276,7 +299,7 @@ public class AppBlocker {
                     browser = "safari";
                     activeUrl = getActiveSafariURL();
                 }
-                if (activeUrl!=null && !activeUrl.isEmpty() && isClosed(activeUrl)) {
+                if (activeUrl != null && !activeUrl.isEmpty() && isClosed(activeUrl)) {
                     closeActiveTab(browser);
                 }
 

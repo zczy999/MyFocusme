@@ -46,11 +46,17 @@ public class AppBlockerController {
         appBlocker.loadBlockedWebsites(); // 加载已保存的屏蔽网址
         appBlocker.loadwhiteWebsites(); // 加载已保存的屏蔽网址
 
+        appBlocker.monitorActiveEdgeUrl();
+        isStartUp = true;
+        outputArea.appendText("Started monitoring Microsoft Edge active URLs.\n");
+
         appBlocker.setOnActiveEdgeUrlChangedListener((url, browser) -> {
             Platform.runLater(() -> {
-//                if (appBlocker.isWhiteWeb(url)){
-//                    return;
-//                }
+                //白名单功能
+                if (appBlocker.isWhiteWeb(url)){
+                    return;
+                }
+
                 if (appBlocker.isBlocked(url)) {
                     if (browser.equals("edge")) {
                         outputArea.appendText("The active website in Microsoft Edge is blocked: " + url + "\n");
