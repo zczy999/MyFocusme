@@ -1,5 +1,7 @@
 package com.tsymq;
 
+import javafx.scene.control.TextArea;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -9,7 +11,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 public class AppBlocker {
@@ -24,8 +25,8 @@ public class AppBlocker {
 
     private final Set<String> closedWebsites = new HashSet<>();
 
+    private TextArea outputArea;
 
-    private volatile boolean monitoring = false;
 
     public AppBlocker() {
         closedWebsites.add("javbus");
@@ -38,16 +39,53 @@ public class AppBlocker {
         closedWebsites.add("njav");
     }
 
+    public void monitorActiveEdgeUrl(TextArea outputArea) {
+        this.outputArea = outputArea;
+        new Thread(() -> {
+            while (true) {
+                String activeAppName = getActiveAppName();
+                if (activeAppName.equals("Google Chrome") || activeAppName.equals("Safari")) {
+                    closeApp(activeAppName);
+                    outputArea.appendText("close " + activeAppName + "\n");
+                    continue;
+                }
 
-    public interface OnActiveEdgeUrlChangedListener {
-        void onActiveEdgeUrlChanged(String url, String browser);
+                if (activeAppName.equals("Microsoft Edge")) {
+                    String activeEdgeURL = getActiveEdgeURL();
+                    String activeEdgeTitle = getActiveEdgeTitle();
+
+                    if (isWhiteWeb(activeEdgeTitle)) {
+                        stopTimes(1500);
+                        continue;
+                    }
+
+                    if (isBlocked(activeEdgeURL)) {
+                        openNewEdgeTab();
+                        continue;
+                    }
+
+                    if (isClosed(activeEdgeURL)) {
+                        closeActiveEdgeTab();
+                        outputArea.appendText("close web" + activeEdgeURL + "\n");
+                        continue;
+                    }
+
+                }
+
+                stopTimes(1500);
+            }
+        }).start();
     }
 
-    private OnActiveEdgeUrlChangedListener onActiveEdgeUrlChangedListener;
 
-    public void setOnActiveEdgeUrlChangedListener(OnActiveEdgeUrlChangedListener onActiveEdgeUrlChangedListener) {
-        this.onActiveEdgeUrlChangedListener = onActiveEdgeUrlChangedListener;
+    private void stopTimes(int millis) {
+        try {
+            Thread.sleep(millis); // 每2秒检查一次
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
+
 
     public boolean block(String itemToBlock) {
         if (itemToBlock.contains("http://") || itemToBlock.contains("https://")) {
@@ -65,126 +103,38 @@ public class AppBlocker {
     }
 
     public void openNewEdgeTab() {
-        String[] command = {"osascript", "-e", "tell application \"Microsoft Edge\" to make new tab at end of tabs of front window"};
-        runScript(command);
+        String command = "tell application \"Microsoft Edge\" to make new tab at end of tabs of front window";
+        CommandUtil.executeAppleScript(command);
     }
 
-
-    public void openNewSafariTab() {
-        String newTabScript = "tell application \"Safari\"\n" +
-                "   tell window 1\n" +
-                "       set newTab to make new tab\n" +
-                "       set current tab to newTab\n" +
-                "   end tell\n" +
-                "end tell";
-        String[] args = {"osascript", "-e", newTabScript};
-        runScript(args);
-    }
-
-    private static void runScript(String[] command) {
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
-        try {
-            processBuilder.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     private String getActiveAppName() {
-        String getActiveAppNameScript ="tell application \"System Events\" to name of first application process whose frontmost is true";
-        String[] args = {"osascript", "-e", getActiveAppNameScript};
-        String result = runScript1(args);
-
-        if (result == null || result.isBlank()) {
-            return null;
-        }
-        return result.trim();
-    }
-
-    private String getActiveSafariURL() {
-        String safariURLScript = "tell application \"System Events\"\n" +
-                "   set activeApp to name of first application process whose frontmost is true\n" +
-                "end tell\n" +
-                "if activeApp is \"Safari\" then\n" +
-                "   tell application \"Safari\"\n" +
-                "       if exists (document 1) then\n" +
-                "           return URL of document 1\n" +
-                "       end if\n" +
-                "   end tell\n" +
-                "else\n" +
-                "   return \"\"\n" +
-                "end if";
-        String[] args = {"osascript", "-e", safariURLScript};
-        String result = runScript1(args);
-
-        if (result == null || result.isBlank()) {
-            return null;
-        }
-        return result.trim();
-    }
-
-    private String runScript1(String[] args) {
-        try {
-            ProcessBuilder processBuilder = new ProcessBuilder(args);
-            Process process = processBuilder.start();
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                return reader.lines().collect(Collectors.joining("\n"));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+        String getActiveAppNameScript = "tell application \"System Events\" to name of first application process whose frontmost is true";
+        return CommandUtil.executeAppleScript(getActiveAppNameScript);
     }
 
 
-    public String getActiveEdgeURL() {
-        String[] command = {"osascript", "-e",
-                "tell application \"System Events\" to set activeApp to name of first application process whose frontmost is true\n" +
-                        "if activeApp is \"Microsoft Edge\" then\n" +
-                        "tell application \"Microsoft Edge\" to set currentURL to URL of active tab of front window\n" +
-                        "return currentURL\n" +
-                        "else\n" +
-                        "return \"\"\n" +
-                        "end if"};
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
-        try {
-            Process process = processBuilder.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            return reader.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "";
-        }
+    private String getActiveEdgeURL() {
+        String command = "tell application \"Microsoft Edge\" to get URL of active tab of front window";
+        return CommandUtil.executeAppleScript(command);
     }
 
-    public void closeBrowserWindow(String browser) {
-        String closeWindowScript;
-        if (browser.equals("edge")) {
-            closeWindowScript = "tell application \"Microsoft Edge\" to close front window";
-        } else {
-            closeWindowScript = "tell application \"Safari\" to close front window";
-        }
-        String[] args = {"osascript", "-e", closeWindowScript};
-        runScript(args);
+    private String getActiveEdgeTitle() {
+        String command = "tell application \"Microsoft Edge\" to set currentTitle to title of active tab of front window";
+        return CommandUtil.executeAppleScript(command);
     }
 
-    public void closeActiveTab(String browser) {
+
+    public void closeActiveEdgeTab() {
         String closeTabScript;
-
-        if (browser.equals("edge")) {
-            closeTabScript = "tell application \"Microsoft Edge\" to close active tab of front window";
-        } else {
-            closeTabScript = "tell application \"Safari\" to close current tab of front window";
-        }
-
-        String[] args = {"osascript", "-e", closeTabScript};
-        runScript(args);
+        closeTabScript = "tell application \"Microsoft Edge\" to close active tab of front window";
+        CommandUtil.executeAppleScript(closeTabScript);
     }
 
-    private void closeChrome() {
-        String closeChromeScript = "tell application \"Google Chrome\" to quit";
-        String[] args = {"osascript", "-e", closeChromeScript};
-        runScript(args);
+    private void closeApp(String activeAppName) {
+        String closeAppScript = "tell application \"%s\" to quit";
+        closeAppScript = String.format(closeAppScript, activeAppName);
+        CommandUtil.executeAppleScript(closeAppScript);
     }
 
     public boolean isBlocked(String url) {
@@ -196,9 +146,9 @@ public class AppBlocker {
         return false;
     }
 
-    public boolean isWhiteWeb(String url) {
+    public boolean isWhiteWeb(String title) {
         for (String whiteWebsite : whiteWebsites) {
-            if (url.contains(whiteWebsite)) {
+            if (title.contains(whiteWebsite)) {
                 return true;
             }
         }
@@ -212,12 +162,6 @@ public class AppBlocker {
             }
         }
         return false;
-    }
-
-
-    public boolean closeWebsite(String website) {
-        closedWebsites.add(website);
-        return true;
     }
 
 
@@ -258,64 +202,6 @@ public class AppBlocker {
                 e.printStackTrace();
             }
         }
-    }
-
-
-    public void monitorActiveEdgeUrl() {
-        monitoring = true;
-        new Thread(() -> {
-            while (monitoring) {
-                String activeAppName = getActiveAppName();
-                if (activeAppName!=null && activeAppName.equals("Google Chrome")){
-                    closeChrome();
-                    continue;
-                }
-
-                String browser = "edge";
-                String activeUrl = getActiveEdgeURL();
-                if (activeUrl.isEmpty()) {
-                    browser = "safari";
-                    activeUrl = getActiveSafariURL();
-                }
-                if (activeUrl != null && !activeUrl.isEmpty() && onActiveEdgeUrlChangedListener != null) {
-                    onActiveEdgeUrlChangedListener.onActiveEdgeUrlChanged(activeUrl, browser);
-                }
-
-                try {
-                    Thread.sleep(2000); // 每1秒检查一次
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-
-    public void monitorActiveEdgeUrlToClose() {
-        new Thread(() -> {
-            while (true) {
-                String browser = "edge";
-                String activeUrl = getActiveEdgeURL();
-                if (activeUrl.isEmpty()) {
-                    browser = "safari";
-                    activeUrl = getActiveSafariURL();
-                }
-                if (activeUrl != null && !activeUrl.isEmpty() && isClosed(activeUrl)) {
-                    closeActiveTab(browser);
-                }
-
-
-                try {
-                    Thread.sleep(1000); // 每3秒检查一次
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-
-
-    public void stopMonitoring() {
-        monitoring = false;
     }
 
 
