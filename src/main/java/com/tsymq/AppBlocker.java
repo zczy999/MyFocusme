@@ -11,6 +11,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class AppBlocker {
@@ -25,10 +28,12 @@ public class AppBlocker {
 
     private final Set<String> closedWebsites = new HashSet<>();
 
-    private TextArea outputArea;
+    private ScheduledExecutorService scheduler;
 
 
     public AppBlocker() {
+        this.scheduler = Executors.newScheduledThreadPool(1);
+
         closedWebsites.add("javbus");
         closedWebsites.add("porn");
         closedWebsites.add("javlibrary");
@@ -40,14 +45,13 @@ public class AppBlocker {
     }
 
     public void monitorActiveEdgeUrl(TextArea outputArea) {
-        this.outputArea = outputArea;
-        new Thread(() -> {
-            while (true) {
+        Runnable monitor = new Runnable() {
+            public void run() {
                 String activeAppName = getActiveAppName();
                 if (activeAppName.equals("Google Chrome") || activeAppName.equals("Safari")) {
                     closeApp(activeAppName);
                     outputArea.appendText("close " + activeAppName + "\n");
-                    continue;
+                    return;
                 }
 
                 if (activeAppName.equals("Microsoft Edge")) {
@@ -55,34 +59,37 @@ public class AppBlocker {
                     String activeEdgeTitle = getActiveEdgeTitle();
 
                     if (isWhiteWeb(activeEdgeTitle)) {
-                        stopTimes(1500);
-                        continue;
+                        return;
                     }
 
                     if (isBlocked(activeEdgeURL)) {
                         openNewEdgeTab();
-                        continue;
+                        return;
                     }
 
                     if (isClosed(activeEdgeURL)) {
                         closeActiveEdgeTab();
                         outputArea.appendText("close web" + activeEdgeURL + "\n");
-                        continue;
                     }
-
                 }
-
-                stopTimes(1500);
             }
-        }).start();
+        };
+
+        scheduler.scheduleWithFixedDelay(monitor, 0, 1500, TimeUnit.MILLISECONDS);
+
     }
 
-
-    private void stopTimes(int millis) {
-        try {
-            Thread.sleep(millis); // 每2秒检查一次
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public void stop() {
+        if (this.scheduler != null) {
+            this.scheduler.shutdown();
+            try {
+                // 等待任务结束，最长等待1分钟
+                if (!scheduler.awaitTermination(60, TimeUnit.SECONDS)) {
+                    scheduler.shutdownNow(); // 取消当前执行的任务
+                }
+            } catch (InterruptedException e) {
+                scheduler.shutdownNow();
+            }
         }
     }
 

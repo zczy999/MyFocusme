@@ -25,6 +25,7 @@ public class CommandUtil {
                 output.append(line + "\n");
             }
 
+            reader.close();
             return output.toString().trim();
         } catch (IOException e) {
             e.printStackTrace();
