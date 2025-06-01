@@ -1,17 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
 
-<?import javafx.scene.layout.HBox?>
-<VBox alignment="CENTER" spacing="10" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/11.0.1"
+<VBox alignment="CENTER" spacing="15" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tsymq.AppBlockerController">
+    
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
 
-    <TextArea fx:id="outputArea" wrapText="true" editable="false" minWidth="300" minHeight="500"
-              styleClass="outputArea"/>
+    <!-- 应用标题 -->
+    <Label text="MyFocusme" styleClass="app-title">
+        <font>
+            <Font name="System Bold" size="24"/>
+        </font>
+    </Label>
+
+    <!-- 模式状态显示区域 -->
+    <VBox alignment="CENTER" spacing="10" styleClass="status-panel">
+        <padding>
+            <Insets top="15" right="15" bottom="15" left="15"/>
+        </padding>
+        
+        <!-- 当前模式显示 -->
+        <Label fx:id="modeStatusLabel" text="普通模式" styleClass="mode-status">
+            <font>
+                <Font name="System Bold" size="18"/>
+            </font>
+        </Label>
+        
+        <!-- 倒计时显示（仅学习模式可见） -->
+        <VBox fx:id="countdownPanel" alignment="CENTER" spacing="5" visible="false" managed="false">
+            <Label text="剩余时间" styleClass="countdown-label"/>
+            <Label fx:id="countdownLabel" text="00:00:00" styleClass="countdown-time">
+                <font>
+                    <Font name="System Bold" size="32"/>
+                </font>
+            </Label>
+            
+            <!-- 进度条 -->
+            <ProgressBar fx:id="progressBar" prefWidth="300" styleClass="focus-progress"/>
+            
+            <!-- 进度文本 -->
+            <Label fx:id="progressLabel" text="0%" styleClass="progress-text"/>
+        </VBox>
+    </VBox>
+
+    <!-- 普通模式面板 -->
+    <VBox fx:id="normalModePanel" alignment="CENTER" spacing="15" styleClass="mode-panel">
+        
+        <!-- 进入学习模式按钮 -->
+        <Button fx:id="focusModeButton" text="进入学习模式" onAction="#onFocusModeButtonClicked" 
+                styleClass="focus-mode-button" prefWidth="200" prefHeight="50">
+            <font>
+                <Font name="System Bold" size="16"/>
+            </font>
+        </Button>
+        
+        <!-- 网站管理区域 -->
+        <VBox alignment="CENTER" spacing="10" styleClass="website-management">
+            <Label text="网站管理" styleClass="section-title">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+            
+            <HBox alignment="CENTER" spacing="10">
+                <TextField fx:id="inputField" promptText="输入要屏蔽的网站..." prefWidth="250"/>
+                <Button text="添加" onAction="#onBlockButtonClicked" styleClass="add-button"/>
+            </HBox>
+        </VBox>
+        
+        <!-- 使用统计区域 -->
+        <VBox alignment="CENTER" spacing="5" styleClass="stats-panel">
+            <Label text="使用统计" styleClass="section-title">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+            <Label fx:id="statsLabel" text="今日专注时间: 0分钟" styleClass="stats-text"/>
+        </VBox>
+    </VBox>
+
+    <!-- 学习模式面板 -->
+    <VBox fx:id="focusModePanel" alignment="CENTER" spacing="15" styleClass="focus-mode-panel" 
+          visible="false" managed="false">
+        
+        <!-- 激励文案 -->
+        <Label fx:id="motivationLabel" text="保持专注，你正在变得更好！" styleClass="motivation-text" wrapText="true">
+            <font>
+                <Font name="System Bold" size="16"/>
+            </font>
+        </Label>
+        
+        <!-- 学习模式信息 -->
+        <VBox alignment="CENTER" spacing="5" styleClass="focus-info">
+            <Label fx:id="focusDurationLabel" text="学习时长: 60分钟" styleClass="focus-duration"/>
+            <Label fx:id="focusStartTimeLabel" text="开始时间: --:--" styleClass="focus-start-time"/>
+        </VBox>
+        
+        <!-- 紧急退出按钮（不显眼位置） -->
+        <Button fx:id="emergencyExitButton" text="紧急退出" onAction="#onEmergencyExitClicked" 
+                styleClass="emergency-button" prefWidth="100" prefHeight="30" visible="false">
+            <font>
+                <Font size="10"/>
+            </font>
+        </Button>
+    </VBox>
+
+    <!-- 输出日志区域 -->
+    <VBox alignment="CENTER" spacing="5" styleClass="log-panel">
+        <Label text="系统日志" styleClass="section-title">
+            <font>
+                <Font name="System Bold" size="12"/>
+            </font>
+        </Label>
+        <TextArea fx:id="outputArea" wrapText="true" editable="false" 
+                  prefWidth="400" prefHeight="150" styleClass="output-area"/>
+    </VBox>
+
 </VBox>
 

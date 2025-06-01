@@ -1,0 +1,199 @@
+/* 学习模式专用样式 - 沉浸式设计 */
+
+.root {
+    -fx-background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* 学习模式主容器 */
+.focus-mode-container {
+    -fx-background-color: transparent;
+    -fx-padding: 30;
+}
+
+/* 学习模式标题 */
+.focus-mode-title {
+    -fx-text-fill: white;
+    -fx-font-size: 28pt;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 2);
+}
+
+/* 倒计时区域 - 学习模式特殊样式 */
+.focus-countdown-panel {
+    -fx-background-color: rgba(255,255,255,0.15);
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: rgba(255,255,255,0.3);
+    -fx-border-width: 2;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 15, 0, 0, 5);
+}
+
+.focus-countdown-time {
+    -fx-text-fill: white;
+    -fx-font-size: 48pt;
+    -fx-font-weight: bold;
+    -fx-font-family: "Courier New", monospace;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 5, 0, 0, 2);
+}
+
+.focus-countdown-label {
+    -fx-text-fill: rgba(255,255,255,0.8);
+    -fx-font-size: 14pt;
+    -fx-font-weight: bold;
+}
+
+/* 进度条 - 学习模式样式 */
+.focus-mode-progress {
+    -fx-accent: #f39c12;
+    -fx-background-color: rgba(255,255,255,0.2);
+    -fx-background-radius: 10;
+    -fx-pref-height: 12;
+}
+
+.focus-progress-text {
+    -fx-text-fill: white;
+    -fx-font-size: 14pt;
+    -fx-font-weight: bold;
+}
+
+/* 激励文案区域 */
+.motivation-panel {
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-radius: 15;
+    -fx-padding: 20;
+    -fx-border-color: rgba(255,255,255,0.2);
+    -fx-border-width: 1;
+    -fx-border-radius: 15;
+}
+
+.motivation-title {
+    -fx-text-fill: white;
+    -fx-font-size: 20pt;
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+}
+
+.motivation-quote {
+    -fx-text-fill: rgba(255,255,255,0.9);
+    -fx-font-size: 16pt;
+    -fx-font-style: italic;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+}
+
+/* 学习信息面板 */
+.focus-info-panel {
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-radius: 12;
+    -fx-padding: 15;
+    -fx-border-color: rgba(255,255,255,0.2);
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+}
+
+.focus-info-label {
+    -fx-text-fill: rgba(255,255,255,0.8);
+    -fx-font-size: 12pt;
+}
+
+.focus-info-value {
+    -fx-text-fill: white;
+    -fx-font-size: 14pt;
+    -fx-font-weight: bold;
+}
+
+/* 紧急退出按钮 - 学习模式样式 */
+.focus-emergency-button {
+    -fx-background-color: rgba(231,76,60,0.7);
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: rgba(192,57,43,0.8);
+    -fx-border-width: 1;
+    -fx-font-size: 10pt;
+    -fx-opacity: 0.5;
+    -fx-cursor: hand;
+}
+
+.focus-emergency-button:hover {
+    -fx-background-color: rgba(231,76,60,0.9);
+    -fx-opacity: 0.8;
+}
+
+/* 最小化日志区域 */
+.focus-log-panel {
+    -fx-background-color: rgba(44,62,80,0.8);
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: rgba(52,73,94,0.8);
+    -fx-border-width: 1;
+    -fx-padding: 10;
+}
+
+.focus-log-area {
+    -fx-background-color: rgba(44,62,80,0.9);
+    -fx-text-fill: rgba(236,240,241,0.8);
+    -fx-font-family: "Courier New", monospace;
+    -fx-font-size: 9pt;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: rgba(52,73,94,0.8);
+    -fx-border-width: 1;
+}
+
+/* 动画效果 */
+.focus-pulse {
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.6), 20, 0, 0, 0);
+}
+
+/* 专注状态指示器 */
+.focus-status-indicator {
+    -fx-background-color: #27ae60;
+    -fx-background-radius: 50;
+    -fx-pref-width: 12;
+    -fx-pref-height: 12;
+    -fx-effect: dropshadow(gaussian, rgba(39,174,96,0.8), 10, 0, 0, 0);
+}
+
+/* 学习模式特殊字体 */
+.focus-mode-text {
+    -fx-font-family: "System", "Helvetica Neue", "Arial", sans-serif;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 3, 0, 0, 1);
+}
+
+/* 呼吸效果动画类 */
+.breathing-effect {
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.4), 15, 0, 0, 0);
+}
+
+/* 学习模式卡片 */
+.focus-card {
+    -fx-background-color: rgba(255,255,255,0.12);
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(255,255,255,0.2);
+    -fx-border-width: 1;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 3);
+}
+
+/* 学习模式按钮禁用状态 */
+.focus-button-disabled {
+    -fx-background-color: rgba(149,165,166,0.5);
+    -fx-text-fill: rgba(255,255,255,0.5);
+    -fx-cursor: default;
+}
+
+/* 学习模式成功完成样式 */
+.focus-complete {
+    -fx-background-color: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+}
+
+.focus-complete-text {
+    -fx-text-fill: white;
+    -fx-font-size: 24pt;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 2);
+} 

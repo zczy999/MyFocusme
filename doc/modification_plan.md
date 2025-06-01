@@ -21,19 +21,18 @@
   - [x] 实现 `TimeUtils.java` - 时间工具类
 
 ### 🎨 第二阶段：UI界面重构 (第3-4天)
-- [ ] **FXML界面设计**
-  - [ ] 重新设计 `AppBlocker.fxml` 主界面
-  - [ ] 创建 `FocusModeDialog.fxml` 模式切换对话框
+- [x] **FXML界面设计**
+  - [x] 重新设计 `AppBlocker.fxml` 主界面
+  - [x] 创建 `FocusModeDialog.fxml` 模式切换对话框
 
+- [x] **样式文件更新**
+  - [x] 更新 `styles.css` 支持双模式显示
+  - [x] 创建 `focus-mode-styles.css` 学习模式专用样式
 
-- [ ] **样式文件更新**
-  - [ ] 更新 `styles.css` 支持双模式显示
-  - [ ] 创建 `focus-mode-styles.css` 学习模式专用样式
-
-- [ ] **UI控制器实现**
-  - [ ] 实现 `FocusModeDialogController.java` 对话框控制器
-  - [ ] 实现 `UIStateManager.java` UI状态管理类
-  - [ ] 实现 `NotificationManager.java` 通知管理类
+- [x] **UI控制器实现**
+  - [x] 实现 `FocusModeDialogController.java` 对话框控制器
+  - [x] 实现 `UIStateManager.java` UI状态管理类
+  - [x] 实现 `NotificationManager.java` 通知管理类
 
 ### ⚙️ 第三阶段：业务逻辑集成 (第5-7天)
 - [ ] **AppBlocker类重构**

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" spacing="20" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/11.0.1"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tsymq.ui.FocusModeDialogController">
+    
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
+
+    <!-- 对话框标题 -->
+    <Label text="进入学习模式" styleClass="dialog-title">
+        <font>
+            <Font name="System Bold" size="20"/>
+        </font>
+    </Label>
+
+    <!-- 说明文本 -->
+    <VBox alignment="CENTER" spacing="10" styleClass="description-panel">
+        <Label text="学习模式说明：" styleClass="description-title">
+            <font>
+                <Font name="System Bold" size="14"/>
+            </font>
+        </Label>
+        
+        <VBox alignment="CENTER_LEFT" spacing="5">
+            <Label text="• 进入学习模式后，所有配置的网站将被屏蔽" styleClass="description-text"/>
+            <Label text="• 学习模式期间，切换按钮将消失，无法返回普通模式" styleClass="description-text"/>
+            <Label text="• 只有在设定时间结束后才能自动返回普通模式" styleClass="description-text"/>
+            <Label text="• 请合理设置学习时长，确保能够坚持完成" styleClass="description-text"/>
+        </VBox>
+    </VBox>
+
+    <!-- 时长选择区域 -->
+    <VBox alignment="CENTER" spacing="15" styleClass="duration-panel">
+        <Label text="选择学习时长" styleClass="duration-title">
+            <font>
+                <Font name="System Bold" size="16"/>
+            </font>
+        </Label>
+        
+        <!-- 预设时长按钮 -->
+        <HBox alignment="CENTER" spacing="10" styleClass="preset-buttons">
+            <Button fx:id="duration15Button" text="15分钟" onAction="#onPresetDurationClicked" 
+                    styleClass="preset-button" userData="15"/>
+            <Button fx:id="duration30Button" text="30分钟" onAction="#onPresetDurationClicked" 
+                    styleClass="preset-button" userData="30"/>
+            <Button fx:id="duration60Button" text="1小时" onAction="#onPresetDurationClicked" 
+                    styleClass="preset-button selected" userData="60"/>
+            <Button fx:id="duration120Button" text="2小时" onAction="#onPresetDurationClicked" 
+                    styleClass="preset-button" userData="120"/>
+        </HBox>
+        
+        <!-- 自定义时长 -->
+        <HBox alignment="CENTER" spacing="10" styleClass="custom-duration">
+            <Label text="自定义时长:" styleClass="custom-label"/>
+            <Spinner fx:id="durationSpinner" min="15" max="480" initialValue="60" 
+                     prefWidth="80" styleClass="duration-spinner"/>
+            <Label text="分钟" styleClass="unit-label"/>
+        </HBox>
+        
+        <!-- 选中时长显示 -->
+        <Label fx:id="selectedDurationLabel" text="已选择: 60分钟" styleClass="selected-duration">
+            <font>
+                <Font name="System Bold" size="14"/>
+            </font>
+        </Label>
+    </VBox>
+
+    <!-- 确认提示 -->
+    <VBox alignment="CENTER" spacing="5" styleClass="confirm-panel">
+        <Label text="⚠️ 重要提示" styleClass="warning-title">
+            <font>
+                <Font name="System Bold" size="14"/>
+            </font>
+        </Label>
+        <Label text="一旦进入学习模式，在设定时间内将无法退出" styleClass="warning-text"/>
+        <Label text="请确认您已准备好开始专注学习" styleClass="warning-text"/>
+    </VBox>
+
+    <!-- 按钮区域 -->
+    <HBox alignment="CENTER" spacing="20" styleClass="button-panel">
+        <Button fx:id="cancelButton" text="取消" onAction="#onCancelClicked" 
+                styleClass="cancel-button" prefWidth="100" prefHeight="40">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Button>
+        
+        <Button fx:id="confirmButton" text="开始学习" onAction="#onConfirmClicked" 
+                styleClass="confirm-button" prefWidth="120" prefHeight="40">
+            <font>
+                <Font name="System Bold" size="14"/>
+            </font>
+        </Button>
+    </HBox>
+
+</VBox> 
