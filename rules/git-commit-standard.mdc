@@ -1,0 +1,398 @@
+---
+description: 此规则适用于项目中的所有git提交，确保提交信息清晰、一致且具有良好的可读性。
+globs: 
+alwaysApply: false
+---
+# Git Commit信息标准规范
+
+此规则适用于项目中的所有git提交，确保提交信息清晰、一致且具有良好的可读性。
+
+## 🚀 推荐工作流程
+
+为了更好地支持多行提交信息和规范化流程，建议采用以下工作流程：
+
+### 完整操作流程
+
+#### 1. 检查变更状态
+```bash
+git status
+git diff  # 查看具体变更内容
+```
+
+#### 2. 添加文件到暂存区
+```bash
+git add .
+# 或选择性添加
+git add <specific-files>
+```
+
+#### 3. 创建提交信息文件
+```bash
+# 创建 commit_msg.txt 文件，编写规范的多行提交信息
+# 使用你喜欢的编辑器，如 nano, vim, vscode 等
+nano commit_msg.txt
+```
+
+#### 4. 编写符合规范的提交信息
+参考下方的 commit_msg.txt 模板进行编写
+
+#### 5. 使用文件进行提交
+```bash
+git commit -F commit_msg.txt
+```
+
+#### 6. 清理临时文件
+```bash
+rm commit_msg.txt
+```
+
+#### 7. 验证提交结果
+```bash
+git log --oneline -1  # 查看最新提交
+```
+
+### 优势
+- ✅ 支持完整的多行提交信息格式
+- ✅ 便于编辑和预览提交信息
+- ✅ 避免命令行换行限制
+- ✅ 提高提交信息质量
+- ✅ 便于复用和修改
+- ✅ 可以在编辑器中检查格式和拼写
+- ✅ 支持复杂的提交信息结构
+
+### 快捷脚本示例
+
+可以创建一个脚本来简化这个流程：
+
+```bash
+#!/bin/bash
+# commit.sh - 规范化提交脚本
+
+echo "检查git状态..."
+git status
+
+echo "创建提交信息文件..."
+nano commit_msg.txt
+
+echo "执行提交..."
+git commit -F commit_msg.txt
+
+echo "清理临时文件..."
+rm commit_msg.txt
+
+echo "提交完成！"
+git log --oneline -1
+```
+
+使用方法：
+```bash
+chmod +x commit.sh
+./commit.sh
+```
+
+## 📋 约定式提交规范
+
+我们采用[约定式提交](mdc:https:/www.conventionalcommits.org/zh-hans)规范，格式如下：
+
+```
+<类型>[可选 scope]: <描述>
+
+[可选 body]
+
+[可选 footer(s)]
+```
+
+## 🏷️ 提交类型 (Type)
+
+### 主要类型
+
+| 类型 | 说明 | 示例 |
+|------|------|------|
+| `feat` | 新功能 | `feat: 添加用户登录功能` |
+| `fix` | 错误修复 | `fix: 修复登录页面验证码显示问题` |
+| `docs` | 文档变更 | `docs: 更新API使用说明` |
+| `style` | 代码格式化 | `style: 统一代码缩进格式` |
+| `refactor` | 代码重构 | `refactor: 重构用户管理模块` |
+| `test` | 测试相关 | `test: 添加用户注册单元测试` |
+| `chore` | 构建过程或辅助工具的变动 | `chore: 更新依赖包版本` |
+
+### 扩展类型
+
+| 类型 | 说明 | 示例 |
+|------|------|------|
+| `perf` | 性能优化 | `perf: 优化数据库查询性能` |
+| `ci` | CI配置文件和脚本变动 | `ci: 添加GitHub Actions工作流` |
+| `build` | 影响构建系统或外部依赖 | `build: 升级webpack到最新版本` |
+| `revert` | 撤销之前的提交 | `revert: 撤销feat: 添加用户登录功能` |
+
+## 🎯 作用域 (Scope)
+
+作用域是可选的，用于说明提交影响的范围：
+
+```bash
+feat(auth): 添加OAuth2登录支持
+fix(api): 修复用户信息接口返回错误
+docs(readme): 更新项目安装说明
+```
+
+### 常用作用域示例
+
+- `auth` - 认证相关
+- `api` - API接口相关
+- `ui` - 用户界面
+- `db` - 数据库相关
+- `config` - 配置文件
+- `deps` - 依赖项
+- `security` - 安全相关
+
+## 📝 描述规范
+
+### 基本要求
+
+1. **使用祈使句**：如"添加"而不是"添加了"或"添加中"
+2. **首字母小写**：除非是专有名词
+3. **不要以句号结尾**
+4. **简洁明了**：一行内说清楚做了什么
+5. **使用中文**：便于团队理解
+
+### 良好示例
+
+```bash
+✅ feat: 添加用户头像上传功能
+✅ fix: 修复移动端页面布局错乱问题
+✅ docs: 完善API文档示例代码
+✅ refactor: 简化数据处理逻辑
+```
+
+### 不良示例
+
+```bash
+❌ 修复了一个bug
+❌ 更新
+❌ feat: 添加了用户头像上传功能。
+❌ FIX: 修复移动端页面布局错乱问题
+```
+
+## 📄 详细说明 (Body)
+
+当提交需要更多解释时，可以添加body部分：
+
+```bash
+feat: 添加用户头像上传功能
+
+支持多种图片格式(jpg, png, gif)，自动压缩和裁剪
+集成七牛云存储，提高上传速度和稳定性
+添加头像预览功能，提升用户体验
+```
+
+### Body书写规范
+
+- 每行不超过72个字符
+- 解释"什么"和"为什么"，而不是"怎么做"
+- 可以使用列表形式
+- 与标题之间空一行
+
+## 🔗 页脚 (Footer)
+
+用于引用issue或说明破坏性变更：
+
+### 关联Issue
+
+```bash
+fix: 修复用户登录失败问题
+
+修复在特定浏览器下cookie设置失败导致的登录问题
+
+Closes #123
+Fixes #456
+```
+
+### 破坏性变更
+
+```bash
+feat: 重构用户API接口
+
+BREAKING CHANGE: 用户API接口路径从/api/user改为/api/v2/users
+旧版本客户端需要更新API调用路径
+```
+
+## 🚀 实际示例
+
+### 功能开发
+
+```bash
+feat(auth): 添加微信登录支持
+
+集成微信OAuth2认证流程
+支持用户信息自动绑定
+添加微信登录按钮和样式
+
+Closes #234
+```
+
+### 错误修复
+
+```bash
+fix(payment): 修复支付回调处理异常
+
+修复在高并发情况下支付回调重复处理的问题
+添加幂等性检查机制
+优化异常处理逻辑
+
+Fixes #567
+```
+
+### 文档更新
+
+```bash
+docs: 更新部署指南
+
+添加Docker部署方式说明
+更新环境变量配置示例
+修正安装步骤中的错误命令
+```
+
+### 代码重构
+
+```bash
+refactor(database): 优化数据库连接池配置
+
+重构数据库连接管理逻辑
+提高连接复用率和性能
+简化配置参数
+```
+
+## ✅ 提交前检查清单
+
+在提交代码前，请确认：
+
+- [ ] 提交类型正确且符合规范
+- [ ] 描述清晰简洁，使用祈使句
+- [ ] 作用域准确（如果适用）
+- [ ] 没有拼写错误
+- [ ] 符合字符长度限制
+- [ ] 关联了相关issue（如果适用）
+- [ ] 标明了破坏性变更（如果适用）
+
+## 🛠️ 工具推荐
+
+### 自动化工具
+
+1. **commitizen** - 交互式提交信息生成
+   ```bash
+   npm install -g commitizen cz-conventional-changelog
+   ```
+
+2. **commitlint** - 提交信息格式检查
+   ```bash
+   npm install --save-dev @commitlint/cli @commitlint/config-conventional
+   ```
+
+3. **husky** - Git hooks管理
+   ```bash
+   npm install --save-dev husky
+   ```
+
+### IDE插件
+
+- **VSCode**: Conventional Commits
+- **WebStorm**: Git Commit Template
+- **Vim**: vim-committia
+
+## 📊 提交统计示例
+
+遵循规范的提交记录便于生成变更日志：
+
+```bash
+## v1.2.0 (2024-01-15)
+
+### Features
+* feat(auth): 添加微信登录支持 (#234)
+* feat(ui): 优化移动端用户界面 (#235)
+
+### Bug Fixes  
+* fix(payment): 修复支付回调处理异常 (#567)
+* fix(api): 修复用户信息接口超时问题 (#568)
+
+### Documentation
+* docs: 更新部署指南
+* docs(api): 完善接口文档示例
+```
+
+## 🔄 团队协作建议
+
+1. **统一规范**：团队成员都应遵循同一套提交规范
+2. **代码审查**：在Pull Request中检查提交信息质量
+3. **自动化检查**：配置CI流程验证提交信息格式
+4. **定期回顾**：定期审查和改进提交信息质量
+
+遵循这些规范将大大提高项目的可维护性和团队协作效率。
+
+## 💡 最佳实践总结
+
+1. **使用推荐工作流程**：通过 commit_msg.txt 文件编写提交信息
+2. **遵循约定式提交规范**：使用标准的类型、作用域和描述格式
+3. **编写详细的Body**：解释变更的what和why
+4. **使用清晰的Changes部分**：列出具体的文件变更
+5. **添加Features/Fixes列表**：突出重要功能点
+6. **关联相关Issue**：使用Closes、Fixes等关键词
+
+## 🔧 工具集成建议
+
+- 在团队中推广使用 commit_msg.txt 工作流程
+- 配置编辑器支持 markdown 语法高亮
+- 使用 commitlint 进行自动化检查
+- 在 CI/CD 中集成提交信息验证
+
+遵循这套完整的规范和工作流程，将显著提升团队的开发效率和代码质量管理水平。
+
+## 📝 commit_msg.txt 模板
+
+使用推荐工作流程时，可以参考以下模板创建 `commit_msg.txt` 文件：
+
+### 基础模板
+```
+<类型>[可选scope]: <简洁描述>
+
+<详细说明body，解释what和why>
+
+Changes:
+- 文件1: 具体变更说明
+- 文件2: 具体变更说明
+
+Features/Fixes/其他:
+* 功能点1
+* 功能点2
+* 功能点3
+
+<可选footer，如issue关联或破坏性变更>
+```
+
+### 实际模板示例
+```
+feat: 添加用户认证功能
+
+实现了完整的用户注册、登录和权限验证系统
+集成JWT令牌管理，提升安全性和用户体验
+
+Changes:
+- src/auth/: 新增认证模块，包含登录注册逻辑
+- src/middleware/: 添加JWT验证中间件
+- tests/auth/: 完善认证相关单元测试
+
+Features:
+* 用户注册和邮箱验证
+* JWT令牌生成和验证
+* 权限中间件和路由保护
+* 密码加密和安全存储
+
+Closes #123
+```
+
+---
+
+**记住**：以后的每次提交都使用这个工作流程：
+1. `git add .`
+2. 创建 `commit_msg.txt` 文件
+3. `git commit -F commit_msg.txt`
+4. `rm commit_msg.txt`
