@@ -82,15 +82,21 @@ ehthumbs.db
 Thumbs.db
 
 # Application specific
-## Configuration files (keep template, ignore user-specific)
-/Users/*/
-*.tmp
-*.temp
+## Runtime configuration files (user-specific)
+config/user-config.json
+config/mode-state.json
+config/app-state.json
 
 ## Application logs and data
 logs/
 *.log.*
 application.log
+focus-session.log
+
+## User data directories
+data/
+user-data/
+sessions/
 
 # Build and deployment
 dist/
@@ -108,6 +114,8 @@ build/
 *.swp
 *.swo
 *~
+*.tmp
+*.temp
 
 # Node.js (if using any JS tools)
 node_modules/
@@ -121,3 +129,14 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+
+# MyFocusme specific
+## Keep template config files, ignore user instances
+config/app-config.json.user
+config/blocked-sites.json.user
+
+## Application runtime files
+*.pid
+*.lock
+focus-mode.state
+emergency-exit.log
