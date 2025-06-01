@@ -1,0 +1,48 @@
+{
+  "blockedSites": [
+    {
+      "url": "youtube.com",
+      "description": "视频网站",
+      "enabled": true
+    },
+    {
+      "url": "bilibili.com",
+      "description": "B站",
+      "enabled": true
+    },
+    {
+      "url": "weibo.com",
+      "description": "微博",
+      "enabled": true
+    },
+    {
+      "url": "zhihu.com",
+      "description": "知乎",
+      "enabled": false
+    },
+    {
+      "url": "douyin.com",
+      "description": "抖音",
+      "enabled": true
+    }
+  ],
+  "categories": [
+    {
+      "name": "社交媒体",
+      "sites": ["weibo.com", "douyin.com"]
+    },
+    {
+      "name": "视频娱乐",
+      "sites": ["youtube.com", "bilibili.com"]
+    },
+    {
+      "name": "学习相关",
+      "sites": ["zhihu.com"]
+    }
+  ],
+  "settings": {
+    "blockSubdomains": true,
+    "blockHttps": true,
+    "showBlockedMessage": true
+  }
+} 

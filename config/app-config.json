@@ -1,0 +1,23 @@
+{
+  "application": {
+    "name": "MyFocusme",
+    "version": "1.0.0",
+    "author": "tsymq"
+  },
+  "ui": {
+    "theme": "default",
+    "language": "zh_CN",
+    "windowWidth": 800,
+    "windowHeight": 600
+  },
+  "focus": {
+    "defaultDuration": 60,
+    "maxDuration": 480,
+    "minDuration": 15,
+    "autoSave": true
+  },
+  "security": {
+    "emergencyPasswordEnabled": true,
+    "processProtection": true
+  }
+} 
