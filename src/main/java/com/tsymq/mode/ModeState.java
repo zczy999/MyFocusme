@@ -1,6 +1,7 @@
 package com.tsymq.mode;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -71,6 +72,7 @@ public class ModeState {
     }
     
     // 计算剩余时间（毫秒）
+    @JsonIgnore
     public long getRemainingTimeMs() {
         if (currentMode != Mode.FOCUS) {
             return 0;
@@ -79,6 +81,7 @@ public class ModeState {
     }
     
     // 检查学习模式是否已过期
+    @JsonIgnore
     public boolean isFocusModeExpired() {
         return currentMode == Mode.FOCUS && getRemainingTimeMs() <= 0;
     }

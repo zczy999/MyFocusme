@@ -2,9 +2,11 @@ package com.tsymq.mode;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 
+import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -17,10 +19,41 @@ import static org.assertj.core.api.Assertions.*;
 class ModeManagerTest {
 
     private ModeManager modeManager;
+    private static final String TEST_STATE_FILE = "mode_state_test.json";
 
     @BeforeEach
     void setUp() {
+        // 删除可能存在的状态文件，确保每个测试都从干净状态开始
+        deleteStateFile();
+        
+        // 创建新的ModeManager实例
         modeManager = new ModeManager();
+        
+        // 确保初始状态为普通模式
+        if (modeManager.getCurrentMode() != ModeState.Mode.NORMAL) {
+            modeManager.switchToNormalMode();
+        }
+    }
+
+    @AfterEach
+    void tearDown() {
+        // 清理资源
+        if (modeManager != null) {
+            modeManager.shutdown();
+        }
+        // 删除测试产生的状态文件
+        deleteStateFile();
+    }
+
+    private void deleteStateFile() {
+        File stateFile = new File("mode_state.json");
+        if (stateFile.exists()) {
+            stateFile.delete();
+        }
+        File testStateFile = new File(TEST_STATE_FILE);
+        if (testStateFile.exists()) {
+            testStateFile.delete();
+        }
     }
 
     @Nested
@@ -82,6 +115,8 @@ class ModeManagerTest {
         @Test
         @DisplayName("普通模式的剩余时间应该为0")
         void normalModeShouldHaveZeroRemainingTime() {
+            // 确保在普通模式
+            modeManager.switchToNormalMode();
             assertThat(modeManager.getRemainingTimeMs()).isEqualTo(0);
         }
 
@@ -209,6 +244,9 @@ class ModeManagerTest {
         @Test
         @DisplayName("有效的学习模式时长应该被接受")
         void validFocusModeDurationShouldBeAccepted() {
+            // 确保在普通模式开始
+            modeManager.switchToNormalMode();
+            
             assertThat(modeManager.switchToFocusMode(15)).isTrue();
             
             // 重置到普通模式以便下次测试
