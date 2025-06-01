@@ -58,7 +58,19 @@ public class Main extends Application {
         controller = fxmlLoader.getController();
 
         primaryStage.setTitle("MyFocusme - 专注学习助手");
-        primaryStage.setScene(new Scene(root, 600, 500));
+        
+        // 调整窗口大小以适应新的布局
+        Scene scene = new Scene(root, 600, 550);
+        primaryStage.setScene(scene);
+        
+        // 设置窗口属性
+        primaryStage.setMinWidth(550);
+        primaryStage.setMinHeight(500);
+        primaryStage.setMaxWidth(700);
+        primaryStage.setMaxHeight(700);
+        
+        // 窗口居中显示
+        primaryStage.centerOnScreen();
 
         primaryStage.setOnCloseRequest(event -> {
             event.consume();
