@@ -41,15 +41,15 @@ public class Main extends Application {
 
         primaryStage.setTitle("MyFocusme - 专注学习助手");
         
-        // 调整窗口大小以适应新的布局
-        Scene scene = new Scene(root, 600, 550);
+        // 调整窗口大小 - 保持宽度，增加高度
+        Scene scene = new Scene(root, 500, 650);
         primaryStage.setScene(scene);
         
-        // 设置窗口属性
-        primaryStage.setMinWidth(550);
-        primaryStage.setMinHeight(500);
-        primaryStage.setMaxWidth(700);
-        primaryStage.setMaxHeight(700);
+        // 设置窗口属性 - 增加高度范围
+        primaryStage.setMinWidth(500);
+        primaryStage.setMinHeight(480);
+        primaryStage.setMaxWidth(620);
+        primaryStage.setMaxHeight(680);
         
         // 窗口居中显示
         primaryStage.centerOnScreen();
@@ -114,16 +114,7 @@ public class Main extends Application {
             }
         }));
         
-        MenuItem exitItem = new MenuItem("退出");
-        exitItem.addActionListener(e -> Platform.runLater(() -> {
-            isShuttingDown = true;
-            Platform.exit();
-            System.exit(0);
-        }));
-        
         popup.add(showItem);
-        popup.addSeparator();
-        popup.add(exitItem);
         trayIcon.setPopupMenu(popup);
 
         try {

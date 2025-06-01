@@ -9,10 +9,10 @@
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tsymq.AppBlockerController">
     
     <!-- 主容器 -->
-    <VBox alignment="CENTER" spacing="20" styleClass="main-container">
+    <VBox alignment="CENTER" spacing="18" styleClass="main-container">
 
         <!-- 模式状态显示区域 -->
-        <VBox alignment="CENTER" spacing="15" styleClass="status-panel" maxWidth="600">
+        <VBox alignment="CENTER" spacing="15" styleClass="status-panel" maxWidth="420">
             
             <!-- 当前模式显示 -->
             <Label fx:id="modeStatusLabel" text="普通模式" styleClass="mode-status">
@@ -23,7 +23,7 @@
         </VBox>
 
         <!-- 普通模式面板 -->
-        <VBox fx:id="normalModePanel" alignment="CENTER" spacing="20" styleClass="mode-panel" maxWidth="600">
+        <VBox fx:id="normalModePanel" alignment="CENTER" spacing="18" styleClass="mode-panel" maxWidth="460">
             
             <!-- 进入学习模式按钮 -->
             <Button fx:id="focusModeButton" text="进入学习模式" onAction="#onFocusModeButtonClicked" 
@@ -37,7 +37,7 @@
             <HBox spacing="20" alignment="CENTER">
                 
                 <!-- 网站管理区域 -->
-                <VBox alignment="CENTER" spacing="12" styleClass="website-management" prefWidth="250">
+                <VBox alignment="CENTER" spacing="12" styleClass="website-management" prefWidth="190">
                     <Label text="网站管理" styleClass="section-title">
                         <font>
                             <Font name="System Semibold" size="18"/>
@@ -45,13 +45,13 @@
                     </Label>
                     
                     <VBox spacing="10" alignment="CENTER">
-                        <TextField fx:id="inputField" promptText="输入要屏蔽的网站..." prefWidth="220"/>
+                        <TextField fx:id="inputField" promptText="输入要屏蔽的网站..." prefWidth="170"/>
                         <Button text="添加" onAction="#onBlockButtonClicked" styleClass="add-button" prefWidth="100"/>
                     </VBox>
                 </VBox>
                 
                 <!-- 使用统计区域 -->
-                <VBox alignment="CENTER" spacing="12" styleClass="stats-panel" prefWidth="250">
+                <VBox alignment="CENTER" spacing="12" styleClass="stats-panel" prefWidth="190">
                     <Label text="使用统计" styleClass="section-title">
                         <font>
                             <Font name="System Semibold" size="18"/>
@@ -65,7 +65,7 @@
 
         <!-- 学习模式面板 -->
         <VBox fx:id="focusModePanel" alignment="CENTER" spacing="0" styleClass="focus-mode-panel" 
-              visible="false" managed="false" maxWidth="600" minHeight="200">
+              visible="false" managed="false" maxWidth="420" minHeight="200">
             
             <!-- 学习模式专注区域 -->
             <VBox alignment="CENTER" spacing="30" styleClass="focus-content">
@@ -93,14 +93,14 @@
         </VBox>
 
         <!-- 输出日志区域 -->
-        <VBox alignment="CENTER" spacing="12" styleClass="log-panel" maxWidth="600">
+        <VBox alignment="CENTER" spacing="10" styleClass="log-panel" maxWidth="460">
             <Label text="系统日志" styleClass="section-title">
                 <font>
                     <Font name="System Semibold" size="18"/>
                 </font>
             </Label>
             <TextArea fx:id="outputArea" wrapText="true" editable="false" 
-                      prefWidth="550" prefHeight="100" styleClass="output-area"/>
+                      prefWidth="420" prefHeight="80" styleClass="output-area"/>
         </VBox>
 
     </VBox>

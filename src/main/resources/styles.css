@@ -25,7 +25,7 @@
 .main-container {
     -fx-background-color: transparent;
     -fx-spacing: 20;
-    -fx-padding: 20;
+    -fx-padding: 18;
 }
 
 /* 状态面板 - 玻璃态效果 */
@@ -36,7 +36,7 @@
     -fx-border-color: rgba(255, 255, 255, 0.3);
     -fx-border-width: 1;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 3);
-    -fx-padding: 25;
+    -fx-padding: 22;
 }
 
 .mode-status {
