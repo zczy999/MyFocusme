@@ -42,47 +42,24 @@ public class ConfigManager {
     }
     
     /**
-     * 保存模式状态
+     * 保存模式状态（已禁用）
+     * 应用不再保存状态，每次启动都是全新状态
      * @param modeState 要保存的模式状态
      */
     public void saveModeState(ModeState modeState) {
-        try {
-            File file = new File(AppConfig.MODE_STATE_FILE);
-            objectMapper.writeValue(file, modeState);
-            System.out.println("Mode state saved: " + modeState);
-        } catch (IOException e) {
-            System.err.println("Failed to save mode state: " + e.getMessage());
-        }
+        // 状态保存功能已禁用
+        System.out.println("Mode state save disabled - current mode: " + modeState.getCurrentMode());
     }
     
     /**
-     * 加载模式状态
-     * @return 加载的模式状态，如果文件不存在或加载失败则返回默认的普通模式
+     * 加载模式状态（已禁用）
+     * 总是返回默认的普通模式，不从文件加载
+     * @return 默认的普通模式状态
      */
     public ModeState loadModeState() {
-        try {
-            File file = new File(AppConfig.MODE_STATE_FILE);
-            if (file.exists()) {
-                ModeState modeState = objectMapper.readValue(file, ModeState.class);
-                System.out.println("Mode state loaded: " + modeState);
-                
-                // 检查学习模式是否已过期
-                if (modeState.isFocusModeExpired()) {
-                    System.out.println("Focus mode has expired, switching to normal mode");
-                    ModeState normalMode = ModeState.createNormalMode();
-                    saveModeState(normalMode); // 保存新状态
-                    return normalMode;
-                }
-                
-                return modeState;
-            }
-        } catch (IOException e) {
-            System.err.println("Failed to load mode state: " + e.getMessage());
-        }
-        
-        // 返回默认的普通模式
+        // 总是返回默认的普通模式，不加载保存的状态
         ModeState defaultState = ModeState.createNormalMode();
-        saveModeState(defaultState);
+        System.out.println("Mode state load disabled - starting with normal mode");
         return defaultState;
     }
     

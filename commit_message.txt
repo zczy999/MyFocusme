@@ -1,0 +1,23 @@
+refactor: 移除watchdog机制，简化应用架构
+
+完全移除了复杂的进程监控和自动重启机制，简化应用架构
+应用现在可以正常退出，提升用户体验和开发便利性
+禁用了状态保存功能，确保每次启动都是全新状态
+
+Changes:
+- src/main/java/com/tsymq/Main.java: 大幅简化，移除watchdog相关代码和PID管理
+- src/main/java/com/tsymq/config/ConfigManager.java: 禁用状态保存和加载功能
+- src/main/java/com/tsymq/mode/ModeManager.java: 禁用状态刷新功能
+- src/main/java/com/tsymq/utils/ProcessWatchdog.java: 完全删除watchdog类
+
+Features:
+* 移除复杂的进程监控和自动重启机制
+* 简化托盘菜单，添加正常的退出选项
+* 禁用状态持久化，每次启动都是普通模式
+* 应用可以正常退出，不再强制阻止用户关闭
+* 简化shutdown hook逻辑，提升应用稳定性
+
+Fixes:
+* 解决应用难以正常退出的问题
+* 修复强制重启导致的用户体验问题
+* 消除复杂的PID文件管理带来的潜在问题 

@@ -115,6 +115,7 @@ public class ModeManager {
      */
     private void updateModeState(ModeState newState) {
         this.currentModeState = newState;
+        // 状态保存功能已禁用，不再保存到文件
         configManager.saveModeState(newState);
         
         // 通知监听器
@@ -180,16 +181,12 @@ public class ModeManager {
     }
     
     /**
-     * 强制刷新状态（从配置文件重新加载）
+     * 强制刷新状态（已禁用）
+     * 由于应用不再保存状态，此功能已禁用
      */
     public void refreshState() {
-        ModeState loadedState = configManager.loadModeState();
-        if (!loadedState.equals(currentModeState)) {
-            this.currentModeState = loadedState;
-            if (modeChangeListener != null) {
-                modeChangeListener.accept(loadedState);
-            }
-        }
+        // 状态刷新功能已禁用，因为应用不再保存状态
+        System.out.println("State refresh disabled - application does not persist state");
     }
     
     /**
