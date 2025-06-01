@@ -1,6 +1,7 @@
 package com.tsymq.ui;
 
 import com.tsymq.config.AppConfig;
+import com.tsymq.mode.ModeManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -29,6 +30,7 @@ public class FocusModeDialogController {
     private int selectedDuration = AppConfig.DEFAULT_FOCUS_DURATION_MINUTES;
     private boolean confirmed = false;
     private Stage dialogStage;
+    private ModeManager modeManager;
     
     /**
      * 初始化方法
@@ -39,6 +41,14 @@ public class FocusModeDialogController {
         
         // 默认选中1小时按钮
         selectPresetButton(duration60Button);
+    }
+    
+    /**
+     * 设置模式管理器
+     * @param modeManager 模式管理器实例
+     */
+    public void setModeManager(ModeManager modeManager) {
+        this.modeManager = modeManager;
     }
     
     /**
@@ -148,8 +158,18 @@ public class FocusModeDialogController {
             return;
         }
         
-        confirmed = true;
-        closeDialog();
+        // 尝试切换到学习模式
+        if (modeManager != null) {
+            boolean success = modeManager.switchToFocusMode(selectedDuration);
+            if (success) {
+                confirmed = true;
+                closeDialog();
+            } else {
+                showErrorMessage("无法切换到学习模式，请稍后重试");
+            }
+        } else {
+            showErrorMessage("模式管理器未初始化");
+        }
     }
     
     /**

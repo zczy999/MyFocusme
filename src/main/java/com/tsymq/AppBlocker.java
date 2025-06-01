@@ -1,5 +1,7 @@
 package com.tsymq;
 
+import com.tsymq.mode.ModeManager;
+import com.tsymq.config.BlockedSitesConfig;
 import javafx.scene.control.TextArea;
 
 import java.io.BufferedReader;
@@ -29,19 +31,22 @@ public class AppBlocker {
     private final Set<String> closedWebsites = new HashSet<>();
 
     private ScheduledExecutorService scheduler;
+    
+    // 添加模式管理器依赖
+    private ModeManager modeManager;
 
 
     public AppBlocker() {
         this.scheduler = Executors.newScheduledThreadPool(1);
-
-        closedWebsites.add("javbus");
-        closedWebsites.add("porn");
-        closedWebsites.add("javlibrary");
-        closedWebsites.add("jable");
-        closedWebsites.add("missav");
-        closedWebsites.add("hanime1.me");
-        closedWebsites.add("2dfan");
-        closedWebsites.add("njav");
+        // 硬编码的屏蔽列表现在由BlockedSitesConfig管理
+    }
+    
+    /**
+     * 设置模式管理器
+     * @param modeManager 模式管理器实例
+     */
+    public void setModeManager(ModeManager modeManager) {
+        this.modeManager = modeManager;
     }
 
     public void monitorActiveEdgeUrl(TextArea outputArea) {
@@ -62,11 +67,13 @@ public class AppBlocker {
                         return;
                     }
 
-                    if (isBlocked(activeEdgeURL)) {
+                    // 用户自定义屏蔽网站功能只在学习模式下生效
+                    if (modeManager != null && modeManager.isInFocusMode() && isBlocked(activeEdgeURL)) {
                         openNewEdgeTab();
                         return;
                     }
 
+                    // 硬编码的色情网站屏蔽在所有模式下都生效
                     if (isClosed(activeEdgeURL)) {
                         closeActiveEdgeTab();
                         outputArea.appendText("close web" + activeEdgeURL + "\n");
@@ -77,6 +84,38 @@ public class AppBlocker {
 
         scheduler.scheduleWithFixedDelay(monitor, 0, 1500, TimeUnit.MILLISECONDS);
 
+    }
+    
+    /**
+     * 检查当前是否应该执行用户自定义网站屏蔽功能
+     * @return 是否应该屏蔽用户自定义网站
+     */
+    public boolean shouldBlock() {
+        return modeManager != null && modeManager.isInFocusMode();
+    }
+    
+    /**
+     * 检查当前是否应该执行硬编码网站屏蔽功能
+     * @return 硬编码网站屏蔽始终生效
+     */
+    public boolean shouldBlockHardcoded() {
+        return true; // 硬编码网站屏蔽在所有模式下都生效
+    }
+    
+    /**
+     * 获取当前模式状态信息
+     * @return 模式状态信息
+     */
+    public String getModeStatusInfo() {
+        if (modeManager == null) {
+            return "模式管理器未初始化";
+        }
+        
+        if (modeManager.isInFocusMode()) {
+            return "学习模式 - 全部屏蔽功能已启用 - 剩余时间: " + modeManager.getRemainingTimeFormatted();
+        } else {
+            return "普通模式 - 仅基础屏蔽功能启用（用户自定义屏蔽已禁用）";
+        }
     }
 
     public void stop() {
@@ -163,12 +202,8 @@ public class AppBlocker {
     }
 
     public boolean isClosed(String url) {
-        for (String closedWebsite : closedWebsites) {
-            if (url.contains(closedWebsite)) {
-                return true;
-            }
-        }
-        return false;
+        // 使用配置类检查硬编码的屏蔽网站
+        return BlockedSitesConfig.isHardcodedBlocked(url);
     }
 
 
