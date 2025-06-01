@@ -29,6 +29,7 @@ public class BlockedSitesConfig {
             "javmost",
             "javfree", 
             "javhd",
+            "18comic",
             
             // 国际知名色情网站
             "pornhub",
