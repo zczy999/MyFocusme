@@ -9,7 +9,7 @@ echo "🚀 开始打包 MyFocusme Mac 应用..."
 # 项目信息
 APP_NAME="MyFocusme"
 APP_VERSION="1.0.0"
-MAIN_CLASS="com.tsymq.Main"
+MAIN_CLASS="com.tsymq.Launcher"
 VENDOR="tsymq"
 PACKAGE_ID="com.tsymq.myfocusme"
 
