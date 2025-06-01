@@ -24,26 +24,27 @@
 /* 主容器 */
 .main-container {
     -fx-background-color: transparent;
-    -fx-spacing: 15;
-    -fx-padding: 15;
+    -fx-spacing: 20;
+    -fx-padding: 20;
 }
 
 /* 状态面板 - 玻璃态效果 */
 .status-panel {
     -fx-background-color: rgba(255, 255, 255, 0.95);
-    -fx-background-radius: 15;
-    -fx-border-radius: 15;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
     -fx-border-color: rgba(255, 255, 255, 0.3);
     -fx-border-width: 1;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 3);
-    -fx-padding: 15;
+    -fx-padding: 25;
 }
 
 .mode-status {
     -fx-text-fill: #2c3e50;
-    -fx-font-size: 24px;
+    -fx-font-size: 28px;
     -fx-font-weight: 600;
     -fx-padding: 0 0 10 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0, 0, 1);
 }
 
 /* 倒计时样式 */
@@ -77,45 +78,40 @@
 /* 模式面板 */
 .mode-panel {
     -fx-background-color: rgba(255, 255, 255, 0.95);
-    -fx-background-radius: 15;
-    -fx-border-radius: 15;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
     -fx-border-color: rgba(255, 255, 255, 0.3);
     -fx-border-width: 1;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 3);
-    -fx-padding: 20;
+    -fx-padding: 25;
     -fx-spacing: 15;
 }
 
 .focus-mode-panel {
     -fx-background-color: rgba(255, 255, 255, 0.1);
-    -fx-background-radius: 15;
-    -fx-border-radius: 15;
     -fx-border-color: rgba(255, 255, 255, 0.3);
-    -fx-border-width: 1;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 20, 0, 0, 5);
-    -fx-padding: 20;
-    -fx-spacing: 15;
 }
 
 /* 按钮样式 */
 .focus-mode-button {
     -fx-background-color: #667eea;
     -fx-text-fill: white;
-    -fx-background-radius: 25;
-    -fx-border-radius: 25;
-    -fx-font-size: 18px;
+    -fx-background-radius: 30;
+    -fx-border-radius: 30;
+    -fx-font-size: 20px;
     -fx-font-weight: 600;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(102, 126, 234, 0.4), 15, 0, 0, 5);
-    -fx-padding: 15 30;
-    -fx-min-height: 50;
+    -fx-padding: 18 35;
+    -fx-min-height: 60;
 }
 
 .focus-mode-button:hover {
     -fx-background-color: #5a6fd8;
     -fx-effect: dropshadow(gaussian, rgba(102, 126, 234, 0.6), 20, 0, 0, 8);
-    -fx-scale-y: 1.02;
-    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.03;
+    -fx-scale-x: 1.03;
 }
 
 .focus-mode-button:pressed {
@@ -126,12 +122,13 @@
 .add-button {
     -fx-background-color: #27ae60;
     -fx-text-fill: white;
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
     -fx-cursor: hand;
     -fx-font-weight: 600;
-    -fx-padding: 10 20;
+    -fx-padding: 12 25;
     -fx-effect: dropshadow(gaussian, rgba(39, 174, 96, 0.3), 10, 0, 0, 3);
+    -fx-min-width: 100;
 }
 
 .add-button:hover {
@@ -176,9 +173,10 @@
 /* 区域标题 */
 .section-title {
     -fx-text-fill: #2c3e50;
-    -fx-font-size: 16px;
+    -fx-font-size: 18px;
     -fx-font-weight: 600;
-    -fx-padding: 0 0 10 0;
+    -fx-padding: 0 0 12 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 1, 0, 0, 1);
 }
 
 /* 网站管理区域 */
@@ -233,26 +231,24 @@
 /* 日志面板 */
 .log-panel {
     -fx-background-color: rgba(255, 255, 255, 0.95);
-    -fx-background-radius: 15;
-    -fx-border-radius: 15;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
     -fx-border-color: rgba(255, 255, 255, 0.3);
     -fx-border-width: 1;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 3);
-    -fx-padding: 15;
+    -fx-padding: 25;
     -fx-spacing: 10;
 }
 
 .output-area {
     -fx-background-color: #2c3e50;
     -fx-text-fill: #ecf0f1;
-    -fx-font-family: "SF Mono", "Monaco", "Consolas", monospace;
-    -fx-font-size: 11px;
     -fx-background-radius: 12;
     -fx-border-radius: 12;
-    -fx-border-color: #34495e;
-    -fx-border-width: 1;
+    -fx-font-family: "SF Mono", "Monaco", "Consolas", monospace;
+    -fx-font-size: 13px;
     -fx-padding: 15;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
 }
 
 .output-area .scroll-pane {
@@ -384,4 +380,35 @@
 .confirm-button:hover {
     -fx-background-color: #5a6fd8;
     -fx-effect: dropshadow(gaussian, rgba(102, 126, 234, 0.5), 15, 0, 0, 5);
+}
+
+/* 学习模式专注内容区域 */
+.focus-content {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-border-width: 1;
+    -fx-spacing: 30;
+}
+
+.focus-indicator {
+    -fx-text-fill: rgba(255, 255, 255, 0.9);
+    -fx-font-size: 24px;
+    -fx-font-weight: 300;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0, 0, 1);
+}
+
+.focus-separator {
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+    -fx-pref-height: 1;
+    -fx-max-height: 1;
+    -fx-min-height: 1;
+}
+
+.focus-subtitle {
+    -fx-text-fill: rgba(255, 255, 255, 0.7);
+    -fx-font-size: 16px;
+    -fx-font-weight: 400;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 1, 0, 0, 1);
 }

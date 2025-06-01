@@ -9,68 +9,52 @@
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tsymq.AppBlockerController">
     
     <!-- 主容器 -->
-    <VBox alignment="CENTER" spacing="15" styleClass="main-container">
+    <VBox alignment="CENTER" spacing="20" styleClass="main-container">
 
         <!-- 模式状态显示区域 -->
-        <VBox alignment="CENTER" spacing="12" styleClass="status-panel" maxWidth="500">
+        <VBox alignment="CENTER" spacing="15" styleClass="status-panel" maxWidth="600">
             
             <!-- 当前模式显示 -->
             <Label fx:id="modeStatusLabel" text="普通模式" styleClass="mode-status">
                 <font>
-                    <Font name="System Semibold" size="24"/>
+                    <Font name="System Semibold" size="28"/>
                 </font>
             </Label>
-            
-            <!-- 倒计时显示（仅学习模式可见） -->
-            <VBox fx:id="countdownPanel" alignment="CENTER" spacing="8" visible="false" managed="false">
-                <Label text="剩余时间" styleClass="countdown-label"/>
-                <Label fx:id="countdownLabel" text="00:00:00" styleClass="countdown-time">
-                    <font>
-                        <Font name="System Light" size="48"/>
-                    </font>
-                </Label>
-                
-                <!-- 进度条 -->
-                <ProgressBar fx:id="progressBar" prefWidth="350" prefHeight="8" styleClass="focus-progress"/>
-                
-                <!-- 进度文本 -->
-                <Label fx:id="progressLabel" text="0%" styleClass="progress-text"/>
-            </VBox>
         </VBox>
 
         <!-- 普通模式面板 -->
-        <VBox fx:id="normalModePanel" alignment="CENTER" spacing="15" styleClass="mode-panel" maxWidth="500">
+        <VBox fx:id="normalModePanel" alignment="CENTER" spacing="20" styleClass="mode-panel" maxWidth="600">
             
             <!-- 进入学习模式按钮 -->
             <Button fx:id="focusModeButton" text="进入学习模式" onAction="#onFocusModeButtonClicked" 
-                    styleClass="focus-mode-button" prefWidth="250" prefHeight="55">
+                    styleClass="focus-mode-button" prefWidth="280" prefHeight="60">
                 <font>
-                    <Font name="System Semibold" size="18"/>
+                    <Font name="System Semibold" size="20"/>
                 </font>
             </Button>
             
             <!-- 功能区域容器 -->
-            <HBox spacing="12" alignment="CENTER">
+            <HBox spacing="20" alignment="CENTER">
                 
                 <!-- 网站管理区域 -->
-                <VBox alignment="CENTER" spacing="10" styleClass="website-management" prefWidth="220">
+                <VBox alignment="CENTER" spacing="12" styleClass="website-management" prefWidth="250">
                     <Label text="网站管理" styleClass="section-title">
                         <font>
-                            <Font name="System Semibold" size="16"/>
+                            <Font name="System Semibold" size="18"/>
                         </font>
                     </Label>
                     
-                    <VBox spacing="8" alignment="CENTER">
-                        <TextField fx:id="inputField" promptText="输入要屏蔽的网站..." prefWidth="200"/>
-                        <Button text="添加" onAction="#onBlockButtonClicked" styleClass="add-button" prefWidth="80"/>
+                    <VBox spacing="10" alignment="CENTER">
+                        <TextField fx:id="inputField" promptText="输入要屏蔽的网站..." prefWidth="220"/>
+                        <Button text="添加" onAction="#onBlockButtonClicked" styleClass="add-button" prefWidth="100"/>
                     </VBox>
                 </VBox>
                 
                 <!-- 使用统计区域 -->
-                <VBox alignment="CENTER" spacing="10" styleClass="stats-panel" prefWidth="220">
+                <VBox alignment="CENTER" spacing="12" styleClass="stats-panel" prefWidth="250">
                     <Label text="使用统计" styleClass="section-title">
                         <font>
-                            <Font name="System Semibold" size="16"/>
+                            <Font name="System Semibold" size="18"/>
                         </font>
                     </Label>
                     <Label fx:id="statsLabel" text="今日专注时间: 0分钟" styleClass="stats-text"/>
@@ -80,40 +64,43 @@
         </VBox>
 
         <!-- 学习模式面板 -->
-        <VBox fx:id="focusModePanel" alignment="CENTER" spacing="15" styleClass="focus-mode-panel" 
-              visible="false" managed="false" maxWidth="500">
+        <VBox fx:id="focusModePanel" alignment="CENTER" spacing="0" styleClass="focus-mode-panel" 
+              visible="false" managed="false" maxWidth="600" minHeight="200">
             
-            <!-- 激励文案 -->
-            <Label fx:id="motivationLabel" text="保持专注，你正在变得更好！" styleClass="motivation-text" wrapText="true">
-                <font>
-                    <Font name="System Medium" size="20"/>
-                </font>
-            </Label>
-            
-            <!-- 学习模式信息 -->
-            <VBox alignment="CENTER" spacing="8" styleClass="focus-info">
-                <Label fx:id="focusDurationLabel" text="学习时长: 60分钟" styleClass="focus-duration"/>
-                <Label fx:id="focusStartTimeLabel" text="开始时间: --:--" styleClass="focus-start-time"/>
+            <!-- 学习模式专注区域 -->
+            <VBox alignment="CENTER" spacing="30" styleClass="focus-content">
+                <padding>
+                    <Insets top="40" bottom="40" left="30" right="30"/>
+                </padding>
+                
+                <!-- 专注提示 -->
+                <Label text="专注中..." styleClass="focus-indicator">
+                    <font>
+                        <Font name="System Light" size="24"/>
+                    </font>
+                </Label>
+                
+                <!-- 分隔线 -->
+                <Separator prefWidth="200" styleClass="focus-separator"/>
+                
+                <!-- 简洁提示 -->
+                <Label text="保持专注，远离干扰" styleClass="focus-subtitle">
+                    <font>
+                        <Font name="System Regular" size="16"/>
+                    </font>
+                </Label>
             </VBox>
-            
-            <!-- 紧急退出按钮（不显眼位置） -->
-            <Button fx:id="emergencyExitButton" text="紧急退出" onAction="#onEmergencyExitClicked" 
-                    styleClass="emergency-button" prefWidth="120" prefHeight="35" visible="false">
-                <font>
-                    <Font name="System Medium" size="11"/>
-                </font>
-            </Button>
         </VBox>
 
         <!-- 输出日志区域 -->
-        <VBox alignment="CENTER" spacing="10" styleClass="log-panel" maxWidth="500">
+        <VBox alignment="CENTER" spacing="12" styleClass="log-panel" maxWidth="600">
             <Label text="系统日志" styleClass="section-title">
                 <font>
-                    <Font name="System Semibold" size="16"/>
+                    <Font name="System Semibold" size="18"/>
                 </font>
             </Label>
             <TextArea fx:id="outputArea" wrapText="true" editable="false" 
-                      prefWidth="450" prefHeight="80" styleClass="output-area"/>
+                      prefWidth="550" prefHeight="100" styleClass="output-area"/>
         </VBox>
 
     </VBox>
