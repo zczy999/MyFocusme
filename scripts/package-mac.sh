@@ -73,6 +73,17 @@ jpackage \
     --mac-package-name "$APP_NAME" \
     --java-options "-Dfile.encoding=UTF-8" \
     --java-options "-Djava.awt.headless=false" \
+    --java-options "-Xms32m" \
+    --java-options "-Xmx256m" \
+    --java-options "-XX:+UseG1GC" \
+    --java-options "-XX:+UseCompressedOops" \
+    --java-options "-XX:+UseStringDeduplication" \
+    --java-options "-XX:MaxGCPauseMillis=50" \
+    --java-options "-XX:G1HeapRegionSize=8m" \
+    --java-options "-XX:+DisableExplicitGC" \
+    --java-options "-Dswing.aatext=true" \
+    --java-options "-Dswing.plaf.metal.controlFont=Dialog-12" \
+    --java-options "-Dswing.plaf.metal.userFont=Dialog-12" \
     $ICON_OPTION
 
 # 检查打包结果

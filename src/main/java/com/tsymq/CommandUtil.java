@@ -3,44 +3,58 @@ package com.tsymq;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.TimeUnit;
 
+/**
+ * 系统命令执行工具类
+ * 主要用于执行AppleScript命令以监控和控制浏览器
+ */
 public class CommandUtil {
 
+    private static final int COMMAND_TIMEOUT_SECONDS = 10;
+
     /**
-     * Executes an operating system command and returns the result.
-     * @param command The command to execute.
-     * @return The output of the command as a single string.
+     * 执行系统命令并返回结果
+     * @param command 要执行的命令数组
+     * @return 命令输出结果
      */
     public static String executeCommand(String[] command) {
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
-        processBuilder.redirectErrorStream(true); // Redirect error stream to output stream
-
         try {
+            ProcessBuilder processBuilder = new ProcessBuilder(command);
+            processBuilder.redirectErrorStream(true);
+            
             Process process = processBuilder.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            StringBuilder output = new StringBuilder();
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                output.append(line + "\n");
+            
+            // 设置超时
+            boolean finished = process.waitFor(COMMAND_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+            if (!finished) {
+                process.destroyForcibly();
+                System.err.println("Command timed out: " + String.join(" ", command));
+                return "";
             }
-
-            reader.close();
+            
+            StringBuilder output = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    output.append(line).append("\n");
+                }
+            }
+            
             return output.toString().trim();
-        } catch (IOException e) {
-            e.printStackTrace();
+            
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Error executing command: " + String.join(" ", command) + " - " + e.getMessage());
             return "";
         }
     }
 
     /**
-     * Executes an AppleScript and returns the result.
-     * @param script The AppleScript code as a string.
-     * @return The output of the script execution.
+     * 执行AppleScript并返回结果
+     * @param script AppleScript代码字符串
+     * @return 脚本执行输出
      */
     public static String executeAppleScript(String script) {
-        String[] command = {"osascript", "-e", script};
-        return executeCommand(command);
+        return executeCommand(new String[]{"osascript", "-e", script});
     }
-
 }

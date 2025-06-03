@@ -2,6 +2,7 @@ package com.tsymq;
 
 import com.tsymq.mode.ModeManager;
 import com.tsymq.config.BlockedSitesConfig;
+import com.tsymq.config.AppConfig;
 import javafx.scene.control.TextArea;
 
 import java.io.BufferedReader;
@@ -20,25 +21,15 @@ import java.util.concurrent.TimeUnit;
 
 public class AppBlocker {
 
-    private final String BLOCKED_WEBSITES_FILENAME = "/Users/tsymq/.config/myfocusme/blocked_websites.txt";
-
-    private final String WHITE_WEBSITES_FILENAME = "/Users/tsymq/.config/myfocusme/white_websites.txt";
-
     private final Set<String> blockedWebsites = new HashSet<>();
-
     private final Set<String> whiteWebsites = new HashSet<>();
-
-    private final Set<String> closedWebsites = new HashSet<>();
-
     private ScheduledExecutorService scheduler;
     
     // 添加模式管理器依赖
     private ModeManager modeManager;
 
-
     public AppBlocker() {
         this.scheduler = Executors.newScheduledThreadPool(1);
-        // 硬编码的屏蔽列表现在由BlockedSitesConfig管理
     }
     
     /**
@@ -50,40 +41,37 @@ public class AppBlocker {
     }
 
     public void monitorActiveEdgeUrl(TextArea outputArea) {
-        Runnable monitor = new Runnable() {
-            public void run() {
-                String activeAppName = getActiveAppName();
-                if (activeAppName.equals("Google Chrome") || activeAppName.equals("Safari")) {
-                    closeApp(activeAppName);
-                    outputArea.appendText("close " + activeAppName + "\n");
+        Runnable monitor = () -> {
+            String activeAppName = getActiveAppName();
+            if (activeAppName.equals("Google Chrome") || activeAppName.equals("Safari")) {
+                closeApp(activeAppName);
+                outputArea.appendText("close " + activeAppName + "\n");
+                return;
+            }
+
+            if (activeAppName.equals("Microsoft Edge")) {
+                String activeEdgeURL = getActiveEdgeURL();
+                String activeEdgeTitle = getActiveEdgeTitle();
+
+                if (isWhiteWeb(activeEdgeTitle)) {
                     return;
                 }
 
-                if (activeAppName.equals("Microsoft Edge")) {
-                    String activeEdgeURL = getActiveEdgeURL();
-                    String activeEdgeTitle = getActiveEdgeTitle();
+                // 用户自定义屏蔽网站功能只在学习模式下生效
+                if (shouldBlock() && isBlocked(activeEdgeURL)) {
+                    openNewEdgeTab();
+                    return;
+                }
 
-                    if (isWhiteWeb(activeEdgeTitle)) {
-                        return;
-                    }
-
-                    // 用户自定义屏蔽网站功能只在学习模式下生效
-                    if (modeManager != null && modeManager.isInFocusMode() && isBlocked(activeEdgeURL)) {
-                        openNewEdgeTab();
-                        return;
-                    }
-
-                    // 硬编码的色情网站屏蔽在所有模式下都生效
-                    if (isClosed(activeEdgeURL)) {
-                        closeActiveEdgeTab();
-                        outputArea.appendText("close web" + activeEdgeURL + "\n");
-                    }
+                // 硬编码的色情网站屏蔽在所有模式下都生效
+                if (BlockedSitesConfig.isHardcodedBlocked(activeEdgeURL)) {
+                    closeActiveEdgeTab();
+                    outputArea.appendText("close web" + activeEdgeURL + "\n");
                 }
             }
         };
 
-        scheduler.scheduleWithFixedDelay(monitor, 0, 1500, TimeUnit.MILLISECONDS);
-
+        scheduler.scheduleWithFixedDelay(monitor, 0, AppConfig.MONITOR_INTERVAL_MS, TimeUnit.MILLISECONDS);
     }
     
     /**
@@ -92,14 +80,6 @@ public class AppBlocker {
      */
     public boolean shouldBlock() {
         return modeManager != null && modeManager.isInFocusMode();
-    }
-    
-    /**
-     * 检查当前是否应该执行硬编码网站屏蔽功能
-     * @return 硬编码网站屏蔽始终生效
-     */
-    public boolean shouldBlockHardcoded() {
-        return true; // 硬编码网站屏蔽在所有模式下都生效
     }
     
     /**
@@ -132,14 +112,11 @@ public class AppBlocker {
         }
     }
 
-
     public boolean block(String itemToBlock) {
         if (itemToBlock.contains("http://") || itemToBlock.contains("https://")) {
             return blockWebsite(itemToBlock);
-        } else {
-            // 如果需要屏蔽应用程序，这里可以实现相应的逻辑。
-            return false;
         }
+        return false;
     }
 
     private boolean blockWebsite(String website) {
@@ -153,12 +130,10 @@ public class AppBlocker {
         CommandUtil.executeAppleScript(command);
     }
 
-
     private String getActiveAppName() {
         String getActiveAppNameScript = "tell application \"System Events\" to name of first application process whose frontmost is true";
         return CommandUtil.executeAppleScript(getActiveAppNameScript);
     }
-
 
     private String getActiveEdgeURL() {
         String command = "tell application \"Microsoft Edge\" to get URL of active tab of front window";
@@ -170,81 +145,64 @@ public class AppBlocker {
         return CommandUtil.executeAppleScript(command);
     }
 
-
     public void closeActiveEdgeTab() {
-        String closeTabScript;
-        closeTabScript = "tell application \"Microsoft Edge\" to close active tab of front window";
+        String closeTabScript = "tell application \"Microsoft Edge\" to close active tab of front window";
         CommandUtil.executeAppleScript(closeTabScript);
     }
 
     private void closeApp(String activeAppName) {
-        String closeAppScript = "tell application \"%s\" to quit";
-        closeAppScript = String.format(closeAppScript, activeAppName);
+        String closeAppScript = String.format("tell application \"%s\" to quit", activeAppName);
         CommandUtil.executeAppleScript(closeAppScript);
     }
 
     public boolean isBlocked(String url) {
-        for (String blockedWebsite : blockedWebsites) {
-            if (url.contains(blockedWebsite)) {
-                return true;
-            }
-        }
-        return false;
+        return blockedWebsites.stream().anyMatch(url::contains);
     }
 
     public boolean isWhiteWeb(String title) {
-        for (String whiteWebsite : whiteWebsites) {
-            if (title.contains(whiteWebsite)) {
-                return true;
-            }
-        }
-        return false;
+        return whiteWebsites.stream().anyMatch(title::contains);
     }
-
-    public boolean isClosed(String url) {
-        // 使用配置类检查硬编码的屏蔽网站
-        return BlockedSitesConfig.isHardcodedBlocked(url);
-    }
-
 
     public void saveBlockedWebsites() {
-        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(BLOCKED_WEBSITES_FILENAME))) {
-            for (String blockedWebsite : blockedWebsites) {
-                writer.write(blockedWebsite);
-                writer.newLine();
+        try {
+            Path path = Paths.get(AppConfig.BLOCKED_WEBSITES_FILE);
+            Files.createDirectories(path.getParent());
+            try (BufferedWriter writer = Files.newBufferedWriter(path)) {
+                for (String website : blockedWebsites) {
+                    writer.write(website);
+                    writer.newLine();
+                }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error saving blocked websites: " + e.getMessage());
         }
     }
 
     public void loadBlockedWebsites() {
-        Path blockedWebsitesPath = Paths.get(BLOCKED_WEBSITES_FILENAME);
-        if (Files.exists(blockedWebsitesPath)) {
-            try (BufferedReader reader = Files.newBufferedReader(blockedWebsitesPath)) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    blockedWebsites.add(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+        try {
+            Path path = Paths.get(AppConfig.BLOCKED_WEBSITES_FILE);
+            if (Files.exists(path)) {
+                blockedWebsites.clear();
+                Files.lines(path)
+                    .filter(line -> !line.trim().isEmpty())
+                    .forEach(blockedWebsites::add);
             }
+        } catch (IOException e) {
+            System.err.println("Error loading blocked websites: " + e.getMessage());
         }
     }
 
     public void loadwhiteWebsites() {
-        Path whiteWebsitesPath = Paths.get(WHITE_WEBSITES_FILENAME);
-        if (Files.exists(whiteWebsitesPath)) {
-            try (BufferedReader reader = Files.newBufferedReader(whiteWebsitesPath)) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    whiteWebsites.add(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+        try {
+            Path path = Paths.get(AppConfig.WHITE_WEBSITES_FILE);
+            if (Files.exists(path)) {
+                whiteWebsites.clear();
+                Files.lines(path)
+                    .filter(line -> !line.trim().isEmpty())
+                    .forEach(whiteWebsites::add);
             }
+        } catch (IOException e) {
+            System.err.println("Error loading white websites: " + e.getMessage());
         }
     }
-
-
 }
