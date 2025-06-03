@@ -38,10 +38,10 @@ public class ModeManager {
      */
     private void startTimers() {
         // 每秒更新时间显示
-        scheduler.scheduleWithFixedDelay(this::updateTimeDisplay, 0, 1, TimeUnit.SECONDS);
+        // scheduler.scheduleWithFixedDelay(this::updateTimeDisplay, 0, 1, TimeUnit.SECONDS);
         
-        // 每5秒检查模式状态
-        scheduler.scheduleWithFixedDelay(this::checkModeStatus, 0, 5, TimeUnit.SECONDS);
+        // 每60秒检查模式状态
+        scheduler.scheduleWithFixedDelay(this::checkModeStatus, 0, 60, TimeUnit.SECONDS);
     }
     
     /**

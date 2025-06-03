@@ -116,7 +116,7 @@ public class AppBlockerController {
      */
     @FXML
     void onFocusModeButtonClicked(ActionEvent event) {
-        modeManager.switchToFocusMode(60);
+        modeManager.switchToFocusMode(600);
         outputArea.appendText("已进入学习模式\n");
     }
     
