@@ -237,8 +237,8 @@ class ModeManagerTest {
         @Test
         @DisplayName("学习模式时长应该有最大值限制")
         void focusModeDurationShouldHaveMaximumLimit() {
-            // 测试过大的值（超过8小时）
-            assertThat(modeManager.switchToFocusMode(500)).isFalse();
+            // 测试过大的值（超过1000分钟）
+            assertThat(modeManager.switchToFocusMode(1500)).isFalse();
         }
 
         @Test
