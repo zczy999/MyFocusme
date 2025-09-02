@@ -17,12 +17,20 @@ public class BlockedSitesConfig {
      */
     public static Set<String> getHardcodedBlockedSites() {
         return new HashSet<>(Arrays.asList(
+            //新加
+            "south-plus",
+            "laoli.one",
+            "ctee.kr",
+            "puremedia",
+            "yeha_",
+
+
             // 日本成人网站
             "javbus",
             "javlibrary", 
             "jable",
             "missav",
-            "hanime1.me",
+            "hanime1",
             "2dfan",
             "njav",
             "avmoo",

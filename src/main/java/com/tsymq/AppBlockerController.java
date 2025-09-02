@@ -2,6 +2,7 @@ package com.tsymq;
 
 import com.tsymq.mode.ModeManager;
 import com.tsymq.mode.ModeState;
+import com.tsymq.config.AppConfig;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -46,6 +47,9 @@ public class AppBlockerController {
 
         // 设置模式变更监听器
         modeManager.setModeChangeListener(this::onModeChanged);
+
+        // 启动时自动进入学习模式（使用默认时长）
+        modeManager.switchToFocusMode(AppConfig.DEFAULT_FOCUS_DURATION_MINUTES);
 
         // 启动监控
         appBlocker.monitorActiveEdgeUrl(outputArea);
