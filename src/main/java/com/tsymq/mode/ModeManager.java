@@ -31,6 +31,8 @@ public class ModeManager {
         
         // 启动定时器
         startTimers();
+        // 启动每天17:00定时切换
+        scheduleDailySwitch(17, 0);
     }
     
     /**
@@ -74,6 +76,13 @@ public class ModeManager {
      * @return 是否切换成功
      */
     public boolean switchToFocusMode(int durationMinutes) {
+        // 新增：如果当前时间晚于17:00，则不切换
+        java.time.LocalTime now = java.time.LocalTime.now();
+        java.time.LocalTime cutoff = java.time.LocalTime.of(17, 0);
+        if (now.isAfter(cutoff)) {
+            System.out.println("当前已超过17:00，无法切换到学习模式");
+            return false;
+        }
         if (durationMinutes < AppConfig.MIN_FOCUS_DURATION_MINUTES || 
             durationMinutes > AppConfig.MAX_FOCUS_DURATION_MINUTES) {
             System.err.println("Invalid focus duration: " + durationMinutes + " minutes");
@@ -228,6 +237,34 @@ public class ModeManager {
         }
         
         return Math.min(100.0, (elapsed * 100.0) / totalDuration);
+    }
+    
+    /**
+     * 每天指定时间定时切换模式（如17:00）
+     */
+    private void scheduleDailySwitch(int hour, int minute) {
+        long delay = computeDelayToNextTime(hour, minute);
+        scheduler.schedule(() -> {
+            // 每天定时只切换到普通模式
+            ModeState newState = ModeState.createNormalMode();
+            updateModeState(newState);
+            System.out.println("[定时任务] 已切换到普通模式 (NORMAL)");
+            // 递归安排下一天的定时切换
+            scheduleDailySwitch(hour, minute);
+        }, delay, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * 计算距离下一个指定时间（如17:00）的毫秒数
+     */
+    private long computeDelayToNextTime(int hour, int minute) {
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        java.time.LocalDateTime next = now.withHour(hour).withMinute(minute).withSecond(0).withNano(0);
+        if (!next.isAfter(now)) {
+            next = next.plusDays(1);
+        }
+        java.time.Duration duration = java.time.Duration.between(now, next);
+        return duration.toMillis();
     }
     
     /**
