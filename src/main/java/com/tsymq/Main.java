@@ -59,7 +59,7 @@ public class Main extends Application {
             primaryStage.hide();
         });
 
-        createTrayIcon();
+        // createTrayIcon();
         
         // 默认不显示窗口（使用托盘图标显示/隐藏）
         // primaryStage.show();

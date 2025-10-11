@@ -18,6 +18,8 @@ public class BlockedSitesConfig {
     public static Set<String> getHardcodedBlockedSites() {
         return new HashSet<>(Arrays.asList(
             //新加
+            "fansky",
+            "pixiv",
             "south-plus",
             "laoli.one",
             "ctee.kr",

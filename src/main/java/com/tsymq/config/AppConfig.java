@@ -18,7 +18,7 @@ public class AppConfig {
     // 时间相关常量
     public static final int MIN_FOCUS_DURATION_MINUTES = 15;
     public static final int MAX_FOCUS_DURATION_MINUTES = 1000; // 1000分钟
-    public static final int DEFAULT_FOCUS_DURATION_MINUTES = 1000;
+    public static final int DEFAULT_FOCUS_DURATION_MINUTES = 600;//10小时
     
     // UI更新间隔
     public static final int UI_UPDATE_INTERVAL_MS = 100000; // 100秒

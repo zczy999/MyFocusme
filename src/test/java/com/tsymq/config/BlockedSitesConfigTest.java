@@ -23,11 +23,11 @@ class BlockedSitesConfigTest {
         @DisplayName("应该返回非空的屏蔽网站集合")
         void shouldReturnNonEmptyBlockedSites() {
             Set<String> blockedSites = BlockedSitesConfig.getHardcodedBlockedSites();
-            
+
             assertThat(blockedSites)
                 .isNotNull()
                 .isNotEmpty()
-                .hasSizeGreaterThan(30); // 至少应该有30个网站
+                .hasSizeGreaterThan(40); // 至少应该有40个网站
         }
 
         @Test
