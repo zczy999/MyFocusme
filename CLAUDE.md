@@ -32,6 +32,12 @@ mvn clean package
 # 运行测试
 mvn test
 
+# 运行完整测试套件
+mvn test -Dtest=TestSuite
+
+# 运行单个测试类
+mvn test -Dtest=ModeManagerTest
+
 # 使用脚本快速构建
 ./scripts/build.sh
 
@@ -192,6 +198,34 @@ com.tsymq/
 - `userConfig.json` - 用户配置
 - `modeState.json` - 模式状态（已禁用持久化）
 
+## 测试架构
+
+### 测试框架
+- JUnit 5 (Jupiter) - 主测试框架
+- AssertJ - 流式断言库
+- Mockito - Mock 框架
+- TestFX - JavaFX UI 测试框架
+- Jackson - JSON 序列化测试
+
+### 测试文件结构
+```
+src/test/java/com/tsymq/
+├── TestSuite.java                    # 测试套件入口
+├── mode/
+│   ├── ModeManagerTest.java         # 模式管理器测试
+│   └── ModeStateTest.java           # 模式状态测试
+├── config/
+│   ├── BlockedSitesConfigTest.java  # 屏蔽网站配置测试
+│   └── UserConfigTest.java          # 用户配置测试
+└── utils/
+    └── TimeUtilsTest.java           # 时间工具测试
+```
+
+### 测试覆盖范围
+- **模式管理**：模式切换、时间管理、17:00限制、并发安全
+- **配置管理**：用户配置、屏蔽网站配置、JSON序列化
+- **工具类**：时间格式化、时间计算、边界条件
+
 ## 注意事项
 
 1. **macOS 专属**：应用使用 AppleScript，仅支持 macOS 系统
@@ -200,3 +234,4 @@ com.tsymq/
 4. **状态管理**：应用启动时总是从普通模式开始，不恢复之前的状态
 5. **时间限制**：17:00 后无法切换到学习模式，这是硬编码的业务规则
 6. **测试环境**：JavaFX 测试需要 headless 模式，配置在 pom.xml 中
+7. **测试运行**：某些测试（如17:00限制测试）结果依赖于运行时间
