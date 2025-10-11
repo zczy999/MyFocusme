@@ -235,3 +235,47 @@ src/test/java/com/tsymq/
 5. **时间限制**：17:00 后无法切换到学习模式，这是硬编码的业务规则
 6. **测试环境**：JavaFX 测试需要 headless 模式，配置在 pom.xml 中
 7. **测试运行**：某些测试（如17:00限制测试）结果依赖于运行时间
+
+## 测试架构更新 (2025-10-11)
+
+### 测试套件组成
+- **总测试数**: 139个测试，分布在7个测试类
+- **AppBlockerTest**: 20个测试 - 核心屏蔽逻辑测试
+- **ModeManagerTest**: 18个测试 - 模式管理测试（含时间敏感测试）
+- **ModeStateTest**: 17个测试 - 模式状态测试
+- **BlockedSitesConfigTest**: 34个测试 - 屏蔽配置测试
+- **UserConfigTest**: 18个测试 - 用户配置测试
+- **TimeUtilsTest**: 32个测试 - 时间工具测试
+
+### 关键更新
+
+1. **AppBlocker.block() 方法优化**
+   - 现支持所有格式的屏蔽项，不仅限于完整URL
+   - 可屏蔽关键词如 "facebook" 而非只能屏蔽 "https://facebook.com"
+
+2. **时间敏感测试处理**
+   - ModeManagerTest 中的测试会检测当前时间
+   - 17:00后自动跳过或调整无法执行的学习模式测试
+   - 确保测试在任何时间都能稳定运行
+
+3. **JaCoCo 测试覆盖率**
+   - 已配置JaCoCo插件（版本0.8.11）
+   - 运行 `mvn clean test jacoco:report` 生成覆盖率报告
+   - 报告位置：`target/site/jacoco/index.html`
+   - 最低覆盖率要求：60%
+
+### 运行测试
+
+```bash
+# 运行所有测试
+mvn test
+
+# 运行测试套件
+mvn test -Dtest=TestSuite
+
+# 生成覆盖率报告
+mvn clean test jacoco:report
+
+# 查看覆盖率报告
+open target/site/jacoco/index.html
+```

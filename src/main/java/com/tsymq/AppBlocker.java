@@ -113,7 +113,8 @@ public class AppBlocker {
     }
 
     public boolean block(String itemToBlock) {
-        if (itemToBlock.contains("http://") || itemToBlock.contains("https://")) {
+        // 支持所有格式的屏蔽项，包括不带协议的域名
+        if (itemToBlock != null && !itemToBlock.trim().isEmpty()) {
             return blockWebsite(itemToBlock);
         }
         return false;
