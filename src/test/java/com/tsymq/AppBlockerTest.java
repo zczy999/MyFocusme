@@ -27,6 +27,7 @@ class AppBlockerTest {
 
     private AppBlocker appBlocker;
     private ModeManager mockModeManager;
+    private MockedStatic<Paths> mockedPaths;
 
     @TempDir
     Path tempDir;
@@ -36,18 +37,35 @@ class AppBlockerTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        appBlocker = new AppBlocker();
-        mockModeManager = mock(ModeManager.class);
-        appBlocker.setModeManager(mockModeManager);
-
         // 设置临时文件路径
         blockedWebsitesFile = tempDir.resolve("blockedWebsites.txt");
         whiteWebsitesFile = tempDir.resolve("whiteWebsites.txt");
+
+        // 创建临时文件
+        Files.createFile(blockedWebsitesFile);
+        Files.createFile(whiteWebsitesFile);
+
+        // Mock Paths 来重定向配置文件到临时目录
+        // 使用 CALLS_REAL_METHODS 作为默认行为
+        mockedPaths = mockStatic(Paths.class, Mockito.CALLS_REAL_METHODS);
+
+        // 只 mock 特定的配置文件路径
+        mockedPaths.when(() -> Paths.get(AppConfig.BLOCKED_WEBSITES_FILE))
+            .thenReturn(blockedWebsitesFile);
+        mockedPaths.when(() -> Paths.get(AppConfig.WHITE_WEBSITES_FILE))
+            .thenReturn(whiteWebsitesFile);
+
+        appBlocker = new AppBlocker();
+        mockModeManager = mock(ModeManager.class);
+        appBlocker.setModeManager(mockModeManager);
     }
 
     @AfterEach
     void tearDown() {
         appBlocker.stop();
+        if (mockedPaths != null) {
+            mockedPaths.close();
+        }
     }
 
     @Nested
@@ -212,26 +230,20 @@ class AppBlockerTest {
         @Test
         @DisplayName("保存和加载屏蔽网站列表")
         void shouldSaveAndLoadBlockedWebsites() throws IOException {
-            // Mock静态方法以使用临时目录
-            try (MockedStatic<Paths> mockedPaths = mockStatic(Paths.class)) {
-                mockedPaths.when(() -> Paths.get(AppConfig.BLOCKED_WEBSITES_FILE))
-                    .thenReturn(blockedWebsitesFile);
+            // 添加一些屏蔽网站
+            appBlocker.block("https://blocked1.com");
+            appBlocker.block("https://blocked2.com");
 
-                // 添加一些屏蔽网站
-                appBlocker.block("https://blocked1.com");
-                appBlocker.block("https://blocked2.com");
+            // 验证文件内容
+            List<String> lines = Files.readAllLines(blockedWebsitesFile);
+            assertThat(lines).contains("https://blocked1.com", "https://blocked2.com");
 
-                // 验证文件内容
-                List<String> lines = Files.readAllLines(blockedWebsitesFile);
-                assertThat(lines).contains("https://blocked1.com", "https://blocked2.com");
+            // 创建新实例并加载
+            AppBlocker newBlocker = new AppBlocker();
+            newBlocker.loadBlockedWebsites();
 
-                // 创建新实例并加载
-                AppBlocker newBlocker = new AppBlocker();
-                newBlocker.loadBlockedWebsites();
-
-                assertThat(newBlocker.isBlocked("https://blocked1.com")).isTrue();
-                assertThat(newBlocker.isBlocked("https://blocked2.com")).isTrue();
-            }
+            assertThat(newBlocker.isBlocked("https://blocked1.com")).isTrue();
+            assertThat(newBlocker.isBlocked("https://blocked2.com")).isTrue();
         }
 
         @Test

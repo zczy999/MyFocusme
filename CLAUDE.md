@@ -235,6 +235,62 @@ src/test/java/com/tsymq/
 5. **时间限制**：17:00 后无法切换到学习模式，这是硬编码的业务规则
 6. **测试环境**：JavaFX 测试需要 headless 模式，配置在 pom.xml 中
 7. **测试运行**：某些测试（如17:00限制测试）结果依赖于运行时间
+8. **🚨 测试安全警告**：测试代码**绝对不能**操作生产环境配置文件！
+   - 生产配置路径：`~/.config/myfocusme/`
+   - 测试必须使用 `@TempDir` 或 Mock 机制隔离文件操作
+   - AppBlockerTest 已修复此问题（2025-10-12），使用 MockedStatic<Paths> 重定向文件操作
+
+## 测试安全最佳实践
+
+### 🛡️ 测试隔离原则
+
+**核心原则**：测试代码必须与生产环境完全隔离，绝对不能修改用户的配置文件。
+
+### 文件操作隔离方法
+
+1. **使用 MockedStatic 隔离文件路径**（推荐）
+```java
+@BeforeEach
+void setUp() throws IOException {
+    // 创建临时文件
+    blockedWebsitesFile = tempDir.resolve("blockedWebsites.txt");
+    Files.createFile(blockedWebsitesFile);
+
+    // Mock Paths 来重定向配置文件到临时目录
+    mockedPaths = mockStatic(Paths.class, Mockito.CALLS_REAL_METHODS);
+    mockedPaths.when(() -> Paths.get(AppConfig.BLOCKED_WEBSITES_FILE))
+        .thenReturn(blockedWebsitesFile);
+}
+
+@AfterEach
+void tearDown() {
+    if (mockedPaths != null) {
+        mockedPaths.close();
+    }
+}
+```
+
+2. **使用 @TempDir 注解**
+```java
+@TempDir
+Path tempDir;  // JUnit 自动创建和清理临时目录
+```
+
+3. **避免直接调用会写入文件的方法**
+   - 如果方法会写入配置文件，必须先 Mock 文件操作
+   - 或者使用专门的测试配置路径
+
+### 历史教训
+
+**2025-10-12 事件**：AppBlockerTest 的测试方法直接调用了 `appBlocker.block()` 方法，该方法会自动保存到生产环境配置文件，导致用户的 `~/.config/myfocusme/blocked_websites.txt` 被覆盖。
+
+### 测试检查清单
+
+运行测试前，确保：
+- [ ] 所有涉及文件操作的测试都使用了 `@TempDir` 或 Mock
+- [ ] 没有硬编码生产环境路径
+- [ ] 使用 MockedStatic 拦截了 Paths.get() 调用
+- [ ] 测试结束后正确清理了 Mock 对象
 
 ## 测试架构更新 (2025-10-11)
 
@@ -279,3 +335,29 @@ mvn clean test jacoco:report
 # 查看覆盖率报告
 open target/site/jacoco/index.html
 ```
+
+## 测试架构更新 (2025-10-12)
+
+### 🔒 AppBlockerTest 安全性修复
+
+**问题**：测试方法直接调用 `appBlocker.block()` 会写入生产环境配置文件 `~/.config/myfocusme/blocked_websites.txt`
+
+**解决方案**：
+- 使用 `MockedStatic<Paths>` 拦截所有文件路径访问
+- 将配置文件重定向到 JUnit 的 `@TempDir`
+- 确保测试完全隔离，不影响用户数据
+
+**修复代码示例**：
+```java
+private MockedStatic<Paths> mockedPaths;
+
+@BeforeEach
+void setUp() throws IOException {
+    // Mock Paths 来重定向配置文件到临时目录
+    mockedPaths = mockStatic(Paths.class, Mockito.CALLS_REAL_METHODS);
+    mockedPaths.when(() -> Paths.get(AppConfig.BLOCKED_WEBSITES_FILE))
+        .thenReturn(blockedWebsitesFile);
+}
+```
+
+**影响**：所有 AppBlockerTest 的测试现在完全安全，不会污染生产环境
