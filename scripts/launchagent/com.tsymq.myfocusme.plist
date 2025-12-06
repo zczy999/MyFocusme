@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- 服务标识符 -->
+    <key>Label</key>
+    <string>com.tsymq.myfocusme</string>
+
+    <!-- 启动程序路径 -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Applications/MyFocusme.app/Contents/MacOS/MyFocusme</string>
+    </array>
+
+    <!-- 登录时自动启动 -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- 保活配置：进程退出后自动重启 -->
+    <key>KeepAlive</key>
+    <dict>
+        <!-- 非正常退出时重启 -->
+        <key>SuccessfulExit</key>
+        <false/>
+        <!-- 崩溃时重启 -->
+        <key>Crashed</key>
+        <true/>
+    </dict>
+
+    <!-- 重启间隔（秒），防止频繁重启 -->
+    <key>ThrottleInterval</key>
+    <integer>5</integer>
+
+    <!-- 工作目录 -->
+    <key>WorkingDirectory</key>
+    <string>/Applications/MyFocusme.app</string>
+
+    <!-- 日志输出（安装时会替换 __USER_HOME__ 为实际用户目录） -->
+    <key>StandardOutPath</key>
+    <string>__USER_HOME__/.config/myfocusme/launchagent.log</string>
+    <key>StandardErrorPath</key>
+    <string>__USER_HOME__/.config/myfocusme/launchagent.error.log</string>
+
+    <!-- 进程类型：交互式应用 -->
+    <key>ProcessType</key>
+    <string>Interactive</string>
+
+    <!-- 允许创建用户会话 -->
+    <key>LegacyTimers</key>
+    <true/>
+</dict>
+</plist>
