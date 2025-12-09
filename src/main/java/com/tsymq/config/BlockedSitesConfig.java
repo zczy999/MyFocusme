@@ -9,7 +9,7 @@ import java.util.Set;
  * 管理硬编码的色情网站屏蔽列表
  */
 public class BlockedSitesConfig {
-    
+
     /**
      * 获取硬编码的色情网站屏蔽列表
      * 这些网站在所有模式下都会被屏蔽
@@ -18,6 +18,8 @@ public class BlockedSitesConfig {
     public static Set<String> getHardcodedBlockedSites() {
         return new HashSet<>(Arrays.asList(
             //新加
+            "javdb",
+            "laowang",
             "fansky",
             "pixiv",
             "south-plus",
@@ -29,7 +31,7 @@ public class BlockedSitesConfig {
 
             // 日本成人网站
             "javbus",
-            "javlibrary", 
+            "javlibrary",
             "jable",
             "missav",
             "hanime1",
@@ -37,13 +39,13 @@ public class BlockedSitesConfig {
             "njav",
             "avmoo",
             "javmost",
-            "javfree", 
+            "javfree",
             "javhd",
             "18comic",
-            
+
             // 国际知名色情网站
             "pornhub",
-            "xvideos", 
+            "xvideos",
             "xnxx",
             "redtube",
             "youporn",
@@ -54,21 +56,21 @@ public class BlockedSitesConfig {
             "tnaflix",
             "drtuber",
             "slutload",
-            
+
             // 中文色情网站
             "91porn",
             "caoliu",
             "1024",
-            
+
             // 直播色情网站
             "chaturbate",
             "myfreecams",
-            "camsoda", 
+            "camsoda",
             "stripchat",
             "bongacams",
             "livejasmin",
             "flirt4free",
-            
+
             // 特定关键词
             "porn",
             "xxx",
@@ -79,7 +81,7 @@ public class BlockedSitesConfig {
             "adultsite"
         ));
     }
-    
+
     /**
      * 检查URL是否包含硬编码的屏蔽关键词
      * @param url 要检查的URL
@@ -89,12 +91,12 @@ public class BlockedSitesConfig {
         if (url == null || url.isEmpty()) {
             return false;
         }
-        
+
         String lowerUrl = url.toLowerCase();
         return getHardcodedBlockedSites().stream()
                 .anyMatch(lowerUrl::contains);
     }
-    
+
     /**
      * 获取屏蔽网站数量
      * @return 屏蔽网站总数
@@ -102,7 +104,7 @@ public class BlockedSitesConfig {
     public static int getBlockedSitesCount() {
         return getHardcodedBlockedSites().size();
     }
-    
+
     /**
      * 添加新的屏蔽网站（运行时添加，不持久化）
      * @param sites 要添加的网站集合
