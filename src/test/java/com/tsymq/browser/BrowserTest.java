@@ -49,6 +49,15 @@ class BrowserTest {
         }
 
         @Test
+        @DisplayName("应该支持 SunBrowser")
+        void shouldSupportSunBrowser() {
+            Optional<Browser> browser = BrowserFactory.getBrowser("SunBrowser");
+
+            assertThat(browser).isPresent();
+            assertThat(browser.get()).isInstanceOf(SunBrowser.class);
+        }
+
+        @Test
         @DisplayName("不支持的浏览器应该返回 empty")
         void shouldReturnEmptyForUnsupportedBrowser() {
             Optional<Browser> browser = BrowserFactory.getBrowser("Firefox");
@@ -62,6 +71,7 @@ class BrowserTest {
             assertThat(BrowserFactory.isSupported("Microsoft Edge")).isTrue();
             assertThat(BrowserFactory.isSupported("Google Chrome")).isTrue();
             assertThat(BrowserFactory.isSupported("Safari")).isTrue();
+            assertThat(BrowserFactory.isSupported("SunBrowser")).isTrue();
             assertThat(BrowserFactory.isSupported("Firefox")).isFalse();
             assertThat(BrowserFactory.isSupported("Arc")).isFalse();
         }
@@ -74,7 +84,8 @@ class BrowserTest {
             assertThat(browsers).containsExactlyInAnyOrder(
                 "Microsoft Edge",
                 "Google Chrome",
-                "Safari"
+                "Safari",
+                "SunBrowser"
             );
         }
     }
@@ -259,6 +270,75 @@ class BrowserTest {
                     times(1)
                 );
             }
+        }
+    }
+
+    @Nested
+    @DisplayName("SunBrowser 测试")
+    class SunBrowserTest {
+
+        private Browser sunBrowser;
+
+        @BeforeEach
+        void setUp() {
+            sunBrowser = new SunBrowser();
+        }
+
+        @Test
+        @DisplayName("getName 应该返回正确的应用名称")
+        void shouldReturnCorrectName() {
+            assertThat(sunBrowser.getName()).isEqualTo("SunBrowser");
+        }
+
+        @Test
+        @DisplayName("应该继承 ChromiumBrowser")
+        void shouldExtendChromiumBrowser() {
+            assertThat(sunBrowser).isInstanceOf(ChromiumBrowser.class);
+        }
+
+        @Test
+        @DisplayName("getActiveTabUrl 应该使用 SunBrowser 名称")
+        void shouldUseSunBrowserName() {
+            try (MockedStatic<CommandUtil> mockedCommandUtil = mockStatic(CommandUtil.class)) {
+                mockedCommandUtil.when(() -> CommandUtil.executeAppleScript(anyString()))
+                    .thenReturn("https://example.com");
+
+                sunBrowser.getActiveTabUrl();
+
+                mockedCommandUtil.verify(() ->
+                    CommandUtil.executeAppleScript(contains("SunBrowser")),
+                    times(1)
+                );
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("ChromiumBrowser 继承测试")
+    class ChromiumBrowserInheritanceTest {
+
+        @Test
+        @DisplayName("EdgeBrowser 应该继承 ChromiumBrowser")
+        void edgeShouldExtendChromiumBrowser() {
+            assertThat(new EdgeBrowser()).isInstanceOf(ChromiumBrowser.class);
+        }
+
+        @Test
+        @DisplayName("ChromeBrowser 应该继承 ChromiumBrowser")
+        void chromeShouldExtendChromiumBrowser() {
+            assertThat(new ChromeBrowser()).isInstanceOf(ChromiumBrowser.class);
+        }
+
+        @Test
+        @DisplayName("SunBrowser 应该继承 ChromiumBrowser")
+        void sunBrowserShouldExtendChromiumBrowser() {
+            assertThat(new SunBrowser()).isInstanceOf(ChromiumBrowser.class);
+        }
+
+        @Test
+        @DisplayName("SafariBrowser 不应该继承 ChromiumBrowser")
+        void safariShouldNotExtendChromiumBrowser() {
+            assertThat(new SafariBrowser()).isNotInstanceOf(ChromiumBrowser.class);
         }
     }
 }

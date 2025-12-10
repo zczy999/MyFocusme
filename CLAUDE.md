@@ -57,9 +57,11 @@ open target/site/jacoco/index.html
 | 组件 | 路径 | 职责 |
 |------|------|------|
 | Browser | `browser/Browser.java` | 浏览器抽象接口 |
+| ChromiumBrowser | `browser/ChromiumBrowser.java` | Chromium 系浏览器基类 |
 | BrowserFactory | `browser/BrowserFactory.java` | 浏览器工厂类 |
 | EdgeBrowser | `browser/EdgeBrowser.java` | Edge 适配器 |
 | ChromeBrowser | `browser/ChromeBrowser.java` | Chrome 适配器 |
+| SunBrowser | `browser/SunBrowser.java` | SunBrowser 适配器 |
 | SafariBrowser | `browser/SafariBrowser.java` | Safari 适配器 |
 
 ### 配置管理
@@ -189,6 +191,6 @@ ModeManagerTest 中的测试会检测当前时间，17:00 后自动跳过学习�
 ## 注意事项
 
 1. **macOS 专属**：仅支持 macOS（使用 AppleScript）
-2. **支持的浏览器**：Microsoft Edge、Google Chrome、Safari
+2. **支持的浏览器**：Microsoft Edge、Google Chrome、SunBrowser、Safari
 3. **权限要求**：需要辅助功能权限
 4. **启动状态**：应用启动时总是从普通模式开始

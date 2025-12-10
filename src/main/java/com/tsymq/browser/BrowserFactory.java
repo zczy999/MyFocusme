@@ -15,8 +15,11 @@ public class BrowserFactory {
 
     static {
         // 注册所有支持的浏览器
+        // Chromium 系浏览器
         registerBrowser(new EdgeBrowser());
         registerBrowser(new ChromeBrowser());
+        registerBrowser(new SunBrowser());
+        // 其他浏览器
         registerBrowser(new SafariBrowser());
     }
 
