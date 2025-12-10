@@ -48,7 +48,19 @@ open target/site/jacoco/index.html
 |------|------|------|
 | ModeManager | `mode/ModeManager.java` | 模式切换、时间管理、17:00限制 |
 | ModeState | `mode/ModeState.java` | 模式状态数据、序列化 |
-| AppBlocker | `AppBlocker.java` | 网站屏蔽核心逻辑、Edge 监控 |
+| AppBlocker | `AppBlocker.java` | 网站屏蔽核心逻辑、多浏览器监控 |
+
+### 浏览器适配层
+
+支持多浏览器统一屏蔽，位于 `browser/` 包：
+
+| 组件 | 路径 | 职责 |
+|------|------|------|
+| Browser | `browser/Browser.java` | 浏览器抽象接口 |
+| BrowserFactory | `browser/BrowserFactory.java` | 浏览器工厂类 |
+| EdgeBrowser | `browser/EdgeBrowser.java` | Edge 适配器 |
+| ChromeBrowser | `browser/ChromeBrowser.java` | Chrome 适配器 |
+| SafariBrowser | `browser/SafariBrowser.java` | Safari 适配器 |
 
 ### 配置管理
 
@@ -79,8 +91,14 @@ open target/site/jacoco/index.html
 
 ### AppleScript 集成
 所有 macOS 系统调用通过 `CommandUtil.executeAppleScript()` 执行，包括：
-- 获取 Edge 活动标签页 URL/标题
-- 关闭标签页或应用程序
+- 获取浏览器活动标签页 URL/标题
+- 关闭标签页或打开新标签页
+
+**注意**：不同浏览器的 AppleScript 语法略有不同：
+| 浏览器 | 标签页术语 | 标题属性 |
+|--------|-----------|---------|
+| Edge/Chrome | `active tab` | `title` |
+| Safari | `current tab` | `name` |
 
 ## 配置文件
 
@@ -125,6 +143,7 @@ open target/site/jacoco/index.html
 | 修改学习模式时长限制 | `AppConfig.MIN/MAX_FOCUS_DURATION_MINUTES` |
 | 修改定时切换时间 | `ModeManager.scheduleDailySwitch(17, 0)` |
 | 调整监控间隔 | `AppConfig.MONITOR_INTERVAL_MS` |
+| 添加新浏览器支持 | 创建 `browser/XxxBrowser.java` 并注册到 `BrowserFactory` |
 
 ## 测试规范
 
@@ -170,6 +189,6 @@ ModeManagerTest 中的测试会检测当前时间，17:00 后自动跳过学习�
 ## 注意事项
 
 1. **macOS 专属**：仅支持 macOS（使用 AppleScript）
-2. **浏览器限制**：目前仅支持 Microsoft Edge
+2. **支持的浏览器**：Microsoft Edge、Google Chrome、Safari
 3. **权限要求**：需要辅助功能权限
 4. **启动状态**：应用启动时总是从普通模式开始

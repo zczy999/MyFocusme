@@ -1,5 +1,8 @@
 package com.tsymq;
 
+import com.tsymq.browser.Browser;
+import com.tsymq.browser.BrowserFactory;
+import com.tsymq.browser.EdgeBrowser;
 import com.tsymq.mode.ModeManager;
 import com.tsymq.config.BlockedSitesConfig;
 import com.tsymq.config.AppConfig;
@@ -13,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -43,35 +47,45 @@ public class AppBlocker {
     public void monitorActiveEdgeUrl(TextArea outputArea) {
         Runnable monitor = () -> {
             String activeAppName = getActiveAppName();
-            if (activeAppName.equals("Google Chrome") || activeAppName.equals("Safari")) {
-                closeApp(activeAppName);
-                outputArea.appendText("close " + activeAppName + "\n");
-                return;
+
+            // 使用浏览器工厂获取对应的浏览器适配器
+            Optional<Browser> browserOpt = BrowserFactory.getBrowser(activeAppName);
+
+            if (browserOpt.isPresent()) {
+                Browser browser = browserOpt.get();
+                handleBrowserBlocking(browser, outputArea);
             }
-
-            if (activeAppName.equals("Microsoft Edge")) {
-                String activeEdgeURL = getActiveEdgeURL();
-                String activeEdgeTitle = getActiveEdgeTitle();
-
-                if (isWhiteWeb(activeEdgeTitle)) {
-                    return;
-                }
-
-                // 用户自定义屏蔽网站功能只在学习模式下生效
-                if (shouldBlock() && isBlocked(activeEdgeURL)) {
-                    openNewEdgeTab();
-                    return;
-                }
-
-                // 硬编码的色情网站屏蔽在所有模式下都生效
-                if (BlockedSitesConfig.isHardcodedBlocked(activeEdgeURL)) {
-                    closeActiveEdgeTab();
-                    outputArea.appendText("close web" + activeEdgeURL + "\n");
-                }
-            }
+            // 非支持的浏览器不做任何处理
         };
 
         scheduler.scheduleWithFixedDelay(monitor, 0, AppConfig.MONITOR_INTERVAL_MS, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * 处理浏览器屏蔽逻辑（适用于所有支持的浏览器）
+     * @param browser 浏览器适配器
+     * @param outputArea 输出区域
+     */
+    private void handleBrowserBlocking(Browser browser, TextArea outputArea) {
+        String url = browser.getActiveTabUrl();
+        String title = browser.getActiveTabTitle();
+
+        // 白名单检查（标题匹配）
+        if (isWhiteWeb(title)) {
+            return;
+        }
+
+        // 用户自定义屏蔽网站功能只在学习模式下生效
+        if (shouldBlock() && isBlocked(url)) {
+            browser.openNewTab();
+            return;
+        }
+
+        // 硬编码的色情网站屏蔽在所有模式下都生效
+        if (BlockedSitesConfig.isHardcodedBlocked(url)) {
+            browser.closeActiveTab();
+            outputArea.appendText("close web " + url + " (" + browser.getName() + ")\n");
+        }
     }
     
     /**
@@ -126,9 +140,12 @@ public class AppBlocker {
         return true;
     }
 
+    /**
+     * 打开新的 Edge 标签页（保留向后兼容）
+     */
     public void openNewEdgeTab() {
-        String command = "tell application \"Microsoft Edge\" to make new tab at end of tabs of front window";
-        CommandUtil.executeAppleScript(command);
+        BrowserFactory.getBrowser(EdgeBrowser.APP_NAME)
+                .ifPresent(Browser::openNewTab);
     }
 
     private String getActiveAppName() {
@@ -136,24 +153,12 @@ public class AppBlocker {
         return CommandUtil.executeAppleScript(getActiveAppNameScript);
     }
 
-    private String getActiveEdgeURL() {
-        String command = "tell application \"Microsoft Edge\" to get URL of active tab of front window";
-        return CommandUtil.executeAppleScript(command);
-    }
-
-    private String getActiveEdgeTitle() {
-        String command = "tell application \"Microsoft Edge\" to set currentTitle to title of active tab of front window";
-        return CommandUtil.executeAppleScript(command);
-    }
-
+    /**
+     * 关闭当前 Edge 标签页（保留向后兼容）
+     */
     public void closeActiveEdgeTab() {
-        String closeTabScript = "tell application \"Microsoft Edge\" to close active tab of front window";
-        CommandUtil.executeAppleScript(closeTabScript);
-    }
-
-    private void closeApp(String activeAppName) {
-        String closeAppScript = String.format("tell application \"%s\" to quit", activeAppName);
-        CommandUtil.executeAppleScript(closeAppScript);
+        BrowserFactory.getBrowser(EdgeBrowser.APP_NAME)
+                .ifPresent(Browser::closeActiveTab);
     }
 
     public boolean isBlocked(String url) {
