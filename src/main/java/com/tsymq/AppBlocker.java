@@ -70,6 +70,13 @@ public class AppBlocker {
         String url = browser.getActiveTabUrl();
         String title = browser.getActiveTabTitle();
 
+        // 硬编码屏蔽（最高优先级，所有模式生效，直接关闭）
+        if (BlockedSitesConfig.isHardcodedBlocked(url)) {
+            browser.closeActiveTab();
+            outputArea.appendText("close web " + url + " (" + browser.getName() + ")\n");
+            return;
+        }
+
         // 白名单检查（标题匹配）
         if (isWhiteWeb(title)) {
             return;
@@ -78,13 +85,6 @@ public class AppBlocker {
         // 用户自定义屏蔽网站功能只在学习模式下生效
         if (shouldBlock() && isBlocked(url)) {
             browser.openNewTab();
-            return;
-        }
-
-        // 硬编码的色情网站屏蔽在所有模式下都生效
-        if (BlockedSitesConfig.isHardcodedBlocked(url)) {
-            browser.closeActiveTab();
-            outputArea.appendText("close web " + url + " (" + browser.getName() + ")\n");
         }
     }
     
