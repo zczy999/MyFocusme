@@ -83,6 +83,13 @@ public class AppBlocker {
             return;
         }
 
+        // 软屏蔽（打开新标签页，不受白名单影响，仅学习模式生效）
+        if (shouldBlock() && BlockedSitesConfig.isSoftBlocked(url)) {
+            browser.openNewTab();
+            blockedLogger.info("SOFT_BLOCKED | {} | {}", browser.getName(), url);
+            return;
+        }
+
         // 白名单检查（标题匹配）
         if (isWhiteWeb(title)) {
             blockedLogger.info("WHITE_ALLOWED | {} | {}", browser.getName(), url);

@@ -106,6 +106,33 @@ public class BlockedSitesConfig {
     }
 
     /**
+     * 获取软屏蔽列表（打开新标签页方式，不受白名单影响）
+     * @return 软屏蔽网站集合
+     */
+    public static Set<String> getSoftBlockedSites() {
+        return new HashSet<>(Arrays.asList(
+            // 在这里添加软屏蔽网站
+            "bilibili.com",
+            "youtube.com"
+        ));
+    }
+
+    /**
+     * 检查URL是否在软屏蔽列表中
+     * @param url 要检查的URL
+     * @return 是否应该被软屏蔽
+     */
+    public static boolean isSoftBlocked(String url) {
+        if (url == null || url.isEmpty()) {
+            return false;
+        }
+
+        String lowerUrl = url.toLowerCase();
+        return getSoftBlockedSites().stream()
+                .anyMatch(lowerUrl::contains);
+    }
+
+    /**
      * 添加新的屏蔽网站（运行时添加，不持久化）
      * @param sites 要添加的网站集合
      * @return 更新后的屏蔽网站集合
