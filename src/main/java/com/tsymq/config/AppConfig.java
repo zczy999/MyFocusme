@@ -14,6 +14,9 @@ public class AppConfig {
     public static final String USER_CONFIG_FILE = CONFIG_DIR + "/user_config.json";
     public static final String BLOCKED_WEBSITES_FILE = CONFIG_DIR + "/blocked_websites.txt";
     public static final String WHITE_WEBSITES_FILE = CONFIG_DIR + "/white_websites.txt";
+
+    // 日志目录
+    public static final String LOG_DIR = CONFIG_DIR + "/logs";
     
     // 时间相关常量
     public static final int MIN_FOCUS_DURATION_MINUTES = 15;

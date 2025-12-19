@@ -7,6 +7,8 @@ import com.tsymq.mode.ModeManager;
 import com.tsymq.config.BlockedSitesConfig;
 import com.tsymq.config.AppConfig;
 import javafx.scene.control.TextArea;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -24,6 +26,9 @@ import java.util.concurrent.TimeUnit;
 
 
 public class AppBlocker {
+
+    // 屏蔽日志专用 Logger
+    private static final Logger blockedLogger = LoggerFactory.getLogger("BlockedSitesLogger");
 
     private final Set<String> blockedWebsites = new HashSet<>();
     private final Set<String> whiteWebsites = new HashSet<>();
@@ -74,17 +79,20 @@ public class AppBlocker {
         if (BlockedSitesConfig.isHardcodedBlocked(url)) {
             browser.closeActiveTab();
             outputArea.appendText("close web " + url + " (" + browser.getName() + ")\n");
+            blockedLogger.info("HARDCODED_BLOCKED | {} | {}", browser.getName(), url);
             return;
         }
 
         // 白名单检查（标题匹配）
         if (isWhiteWeb(title)) {
+            blockedLogger.info("WHITE_ALLOWED | {} | {}", browser.getName(), url);
             return;
         }
 
         // 用户自定义屏蔽网站功能只在学习模式下生效
         if (shouldBlock() && isBlocked(url)) {
             browser.openNewTab();
+            blockedLogger.info("USER_BLOCKED | {} | {}", browser.getName(), url);
         }
     }
     

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 控制台输出 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 屏蔽日志文件 - 按天滚动，保留7天 -->
+    <appender name="BLOCKED_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.home}/.config/myfocusme/logs/blocked.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${user.home}/.config/myfocusme/logs/blocked.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} | %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 屏蔽日志专用 Logger -->
+    <logger name="BlockedSitesLogger" level="INFO" additivity="false">
+        <appender-ref ref="BLOCKED_FILE" />
+    </logger>
+
+    <!-- 根 Logger -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>
