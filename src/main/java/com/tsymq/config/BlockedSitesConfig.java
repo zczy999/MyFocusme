@@ -18,6 +18,7 @@ public class BlockedSitesConfig {
     public static Set<String> getHardcodedBlockedSites() {
         return new HashSet<>(Arrays.asList(
             //新加
+            "tktube.com",
             "javdb",
             "laowang",
             "fansky",
