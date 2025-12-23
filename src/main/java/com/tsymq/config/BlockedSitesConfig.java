@@ -18,6 +18,7 @@ public class BlockedSitesConfig {
     public static Set<String> getHardcodedBlockedSites() {
         return new HashSet<>(Arrays.asList(
             //新加
+            "nsfw",
             "av-wiki",
             "dmm.co.jp",
             "tktube.com",
@@ -73,6 +74,28 @@ public class BlockedSitesConfig {
             "bongacams",
             "livejasmin",
             "flirt4free",
+
+            // 订阅制成人内容平台
+            "patreon",
+            "onlyfans",
+            "fansly",
+            "fanvue",
+            "loyalfans",
+            "justfor.fans",
+            "fancentro",
+            "admireme",
+            "frisk.chat",
+            "unlockd",
+
+            // 订阅内容泄露站
+            "coomer",
+            "kemono",
+            "simpcity",
+            "thothub",
+            "fapello",
+            "leakedbb",
+            "socialmediagirls",
+            "thotsbay",
 
             // 特定关键词
             "porn",
