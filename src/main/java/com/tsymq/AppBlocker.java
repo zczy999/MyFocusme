@@ -76,7 +76,7 @@ public class AppBlocker {
         String title = browser.getActiveTabTitle();
 
         // 硬编码屏蔽（最高优先级，所有模式生效，直接关闭）
-        if (BlockedSitesConfig.isHardcodedBlocked(url)) {
+        if (BlockedSitesConfig.isHardcodedBlocked(url) || BlockedSitesConfig.isHardcodedBlocked(title)) {
             browser.closeActiveTab();
             outputArea.appendText("close web " + url + " (" + browser.getName() + ")\n");
             blockedLogger.info("HARDCODED_BLOCKED | {} | {}", browser.getName(), url);

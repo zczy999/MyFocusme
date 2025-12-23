@@ -96,6 +96,8 @@ public class BlockedSitesConfig {
             "leakedbb",
             "socialmediagirls",
             "thotsbay",
+            "nekohouse",
+            "simpcity",
 
             // 特定关键词
             "porn",
