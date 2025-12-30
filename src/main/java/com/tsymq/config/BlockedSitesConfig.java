@@ -161,6 +161,66 @@ public class BlockedSitesConfig {
     }
 
     /**
+     * 精确匹配屏蔽列表（仅主页）
+     * 只屏蔽这些网站的首页，不屏蔽子路径
+     * 软屏蔽：仅学习模式生效，打开新标签页
+     */
+    private static final Set<String> EXACT_MATCH_BLOCKED_SITES = new HashSet<>(Arrays.asList(
+        "linux.do"
+    ));
+
+    /**
+     * 获取精确匹配屏蔽网站列表
+     * @return 精确匹配屏蔽域名集合
+     */
+    public static Set<String> getExactMatchBlockedSites() {
+        return new HashSet<>(EXACT_MATCH_BLOCKED_SITES);
+    }
+
+    /**
+     * 判断路径是否为主页
+     * 主页定义：路径为空、"/"、"/index.html"、"/index.htm"、"/index.php" 等
+     */
+    private static boolean isHomePage(String path) {
+        if (path == null || path.isEmpty() || path.equals("/")) {
+            return true;
+        }
+        String cleanPath = path.split("[?#]")[0].toLowerCase();
+        return Set.of("/index.html", "/index.htm", "/index.php").contains(cleanPath);
+    }
+
+    /**
+     * 检查 URL 是否被精确匹配屏蔽（仅主页）
+     * @param url 要检查的 URL
+     * @return 是否应该被精确匹配屏蔽
+     */
+    public static boolean isExactMatchBlocked(String url) {
+        if (url == null || url.isEmpty()) {
+            return false;
+        }
+
+        try {
+            java.net.URI uri = new java.net.URI(url);
+            String host = uri.getHost();
+            String path = uri.getPath();
+
+            if (host == null) {
+                return false;
+            }
+
+            String normalizedHost = host.toLowerCase();
+            if (normalizedHost.startsWith("www.")) {
+                normalizedHost = normalizedHost.substring(4);
+            }
+
+            boolean domainMatches = EXACT_MATCH_BLOCKED_SITES.contains(normalizedHost);
+            return domainMatches && isHomePage(path);
+        } catch (java.net.URISyntaxException e) {
+            return false;
+        }
+    }
+
+    /**
      * 添加新的屏蔽网站（运行时添加，不持久化）
      * @param sites 要添加的网站集合
      * @return 更新后的屏蔽网站集合

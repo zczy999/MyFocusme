@@ -238,4 +238,66 @@ class BlockedSitesConfigTest {
             assertThat(BlockedSitesConfig.isHardcodedBlocked("http://pornhub.com:80/video")).isTrue();
         }
     }
+
+    @Nested
+    @DisplayName("精确匹配屏蔽测试")
+    class ExactMatchBlockingTest {
+
+        @Test
+        @DisplayName("应该返回非空的精确匹配屏蔽列表")
+        void shouldReturnNonEmptyExactMatchSites() {
+            Set<String> sites = BlockedSitesConfig.getExactMatchBlockedSites();
+            assertThat(sites).isNotNull().isNotEmpty();
+        }
+
+        @ParameterizedTest
+        @DisplayName("应该屏蔽主页 URL")
+        @ValueSource(strings = {
+            "https://linux.do",
+            "https://linux.do/",
+            "https://www.linux.do",
+            "https://www.linux.do/",
+            "https://linux.do/index.html",
+            "https://linux.do/index.htm",
+            "https://LINUX.DO/",
+            "https://linux.do?ref=google",
+            "https://linux.do/#section"
+        })
+        void shouldBlockHomePage(String url) {
+            assertThat(BlockedSitesConfig.isExactMatchBlocked(url))
+                .as("Homepage URL %s should be blocked", url)
+                .isTrue();
+        }
+
+        @ParameterizedTest
+        @DisplayName("不应该屏蔽子路径页面")
+        @ValueSource(strings = {
+            "https://linux.do/t/topic/123",
+            "https://linux.do/c/category",
+            "https://linux.do/u/username",
+            "https://linux.do/search",
+            "https://www.linux.do/about",
+            "https://linux.do/api/v1/test"
+        })
+        void shouldNotBlockSubPaths(String url) {
+            assertThat(BlockedSitesConfig.isExactMatchBlocked(url))
+                .as("Sub-path URL %s should NOT be blocked", url)
+                .isFalse();
+        }
+
+        @Test
+        @DisplayName("不在列表中的域名主页不应被屏蔽")
+        void shouldNotBlockUnlistedDomains() {
+            assertThat(BlockedSitesConfig.isExactMatchBlocked("https://github.com/")).isFalse();
+            assertThat(BlockedSitesConfig.isExactMatchBlocked("https://google.com")).isFalse();
+        }
+
+        @Test
+        @DisplayName("空或无效 URL 应返回 false")
+        void shouldReturnFalseForInvalidUrls() {
+            assertThat(BlockedSitesConfig.isExactMatchBlocked(null)).isFalse();
+            assertThat(BlockedSitesConfig.isExactMatchBlocked("")).isFalse();
+            assertThat(BlockedSitesConfig.isExactMatchBlocked("not-a-valid-url")).isFalse();
+        }
+    }
 } 

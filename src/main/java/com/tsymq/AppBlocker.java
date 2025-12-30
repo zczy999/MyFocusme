@@ -90,6 +90,13 @@ public class AppBlocker {
             return;
         }
 
+        // 精确匹配屏蔽（仅主页，仅学习模式生效）
+        if (shouldBlock() && BlockedSitesConfig.isExactMatchBlocked(url)) {
+            browser.openNewTab();
+            blockedLogger.info("EXACT_MATCH_BLOCKED | {} | {}", browser.getName(), url);
+            return;
+        }
+
         // 白名单检查（标题匹配）
         if (isWhiteWeb(title)) {
             blockedLogger.info("WHITE_ALLOWED | {} | {}", browser.getName(), url);
