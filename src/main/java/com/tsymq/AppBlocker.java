@@ -53,6 +53,12 @@ public class AppBlocker {
         Runnable monitor = () -> {
             String activeAppName = getActiveAppName();
 
+            // 如果前台是系统设置，直接关闭并返回
+            if ("System Settings".equals(activeAppName) || "System Preferences".equals(activeAppName)) {
+                closeSystemSettings(activeAppName);
+                return;
+            }
+
             // 使用浏览器工厂获取对应的浏览器适配器
             Optional<Browser> browserOpt = BrowserFactory.getBrowser(activeAppName);
 
@@ -173,6 +179,15 @@ public class AppBlocker {
     private String getActiveAppName() {
         String getActiveAppNameScript = "tell application \"System Events\" to name of first application process whose frontmost is true";
         return CommandUtil.executeAppleScript(getActiveAppNameScript);
+    }
+
+    /**
+     * 关闭系统设置应用
+     * @param appName 应用名称 ("System Settings" 或 "System Preferences")
+     */
+    private void closeSystemSettings(String appName) {
+        String closeScript = "tell application \"" + appName + "\" to quit";
+        CommandUtil.executeAppleScript(closeScript);
     }
 
     /**
