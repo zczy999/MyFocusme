@@ -64,6 +64,23 @@ open target/site/jacoco/index.html
 | SunBrowser | `browser/SunBrowser.java` | SunBrowser 适配器 |
 | SafariBrowser | `browser/SafariBrowser.java` | Safari 适配器 |
 
+### CDP 协议支持（SunBrowser 多开）
+
+针对 AdsPower 指纹浏览器多开场景，使用 Chrome DevTools Protocol 实现多实例检测：
+
+| 组件 | 路径 | 职责 |
+|------|------|------|
+| CDPClient | `browser/cdp/CDPClient.java` | CDP 客户端，检测运行中的环境和获取标签页 |
+| CDPTab | `browser/cdp/CDPTab.java` | 标签页数据类 |
+
+**工作原理**：
+1. 通过 `ps` 命令检测运行中的 SunBrowser 进程
+2. 从 `DevToolsActivePort` 文件读取调试端口
+3. 通过 `http://127.0.0.1:{port}/json` 获取标签页列表
+4. 通过 `http://127.0.0.1:{port}/json/close/{id}` 关闭标签页
+
+**注意**：AppleScript 只能控制单个 SunBrowser 实例，CDP 方案可以检测和屏蔽所有多开环境。
+
 ### 配置管理
 
 | 组件 | 路径 | 职责 |
