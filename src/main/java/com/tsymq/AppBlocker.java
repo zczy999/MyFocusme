@@ -3,6 +3,9 @@ package com.tsymq;
 import com.tsymq.browser.Browser;
 import com.tsymq.browser.BrowserFactory;
 import com.tsymq.browser.EdgeBrowser;
+import com.tsymq.browser.SunBrowser;
+import com.tsymq.browser.cdp.CDPClient;
+import com.tsymq.browser.cdp.CDPTab;
 import com.tsymq.mode.ModeManager;
 import com.tsymq.config.BlockedSitesConfig;
 import com.tsymq.config.AppConfig;
@@ -18,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -59,17 +63,74 @@ public class AppBlocker {
                 return;
             }
 
-            // 使用浏览器工厂获取对应的浏览器适配器
-            Optional<Browser> browserOpt = BrowserFactory.getBrowser(activeAppName);
+            // SunBrowser 使用 CDP 方式检测所有实例
+            handleSunBrowserCDP(outputArea);
 
-            if (browserOpt.isPresent()) {
-                Browser browser = browserOpt.get();
-                handleBrowserBlocking(browser, outputArea);
+            // 对于其他浏览器，使用 AppleScript 方式（只检测当前活动窗口）
+            // 跳过 SunBrowser，因为已经用 CDP 处理了
+            if (!SunBrowser.APP_NAME.equals(activeAppName)) {
+                Optional<Browser> browserOpt = BrowserFactory.getBrowser(activeAppName);
+                if (browserOpt.isPresent()) {
+                    Browser browser = browserOpt.get();
+                    handleBrowserBlocking(browser, outputArea);
+                }
             }
-            // 非支持的浏览器不做任何处理
         };
 
         scheduler.scheduleWithFixedDelay(monitor, 0, AppConfig.MONITOR_INTERVAL_MS, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * 使用 CDP 处理所有 SunBrowser 实例的屏蔽
+     */
+    private void handleSunBrowserCDP(TextArea outputArea) {
+        List<CDPTab> tabs = CDPClient.getAllTabs();
+
+        for (CDPTab tab : tabs) {
+            String url = tab.url;
+            String title = tab.title;
+
+            // 跳过空白页和内部页面
+            if (url == null || url.isEmpty() || url.startsWith("chrome://") || url.startsWith("about:")) {
+                continue;
+            }
+
+            // 硬编码屏蔽（最高优先级，所有模式生效，直接关闭）
+            if (BlockedSitesConfig.isHardcodedBlocked(url) || BlockedSitesConfig.isHardcodedBlocked(title)) {
+                CDPClient.closeTab(tab.port, tab.id);
+                outputArea.appendText("close web " + url + " (SunBrowser-CDP)\n");
+                blockedLogger.info("HARDCODED_BLOCKED | SunBrowser-CDP | {}", url);
+                continue;
+            }
+
+            // 软屏蔽（打开新标签页，不受白名单影响，仅学习模式生效）
+            if (shouldBlock() && BlockedSitesConfig.isSoftBlocked(url)) {
+                CDPClient.openNewTab(tab.port);
+                CDPClient.closeTab(tab.port, tab.id);
+                blockedLogger.info("SOFT_BLOCKED | SunBrowser-CDP | {}", url);
+                continue;
+            }
+
+            // 精确匹配屏蔽（仅主页，仅学习模式生效）
+            if (shouldBlock() && BlockedSitesConfig.isExactMatchBlocked(url)) {
+                CDPClient.openNewTab(tab.port);
+                CDPClient.closeTab(tab.port, tab.id);
+                blockedLogger.info("EXACT_MATCH_BLOCKED | SunBrowser-CDP | {}", url);
+                continue;
+            }
+
+            // 白名单检查（标题匹配）
+            if (isWhiteWeb(title)) {
+                continue;
+            }
+
+            // 用户自定义屏蔽网站功能只在学习模式下生效
+            if (shouldBlock() && isBlocked(url)) {
+                CDPClient.openNewTab(tab.port);
+                CDPClient.closeTab(tab.port, tab.id);
+                blockedLogger.info("USER_BLOCKED | SunBrowser-CDP | {}", url);
+            }
+        }
     }
 
     /**
